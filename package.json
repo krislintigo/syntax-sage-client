@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "syntax-sage-client",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,5 +28,16 @@
     "sass": "^1.69.5",
     "vue": "^3.3.13",
     "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "@feathersjs/authentication-client": "^5.0.12",
+    "@feathersjs/feathers": "^5.0.12",
+    "@feathersjs/socketio-client": "^5.0.12",
+    "@pinia/nuxt": "^0.5.1",
+    "feathers-pinia": "^4.1.1",
+    "nuxt-feathers-pinia": "^0.1.0",
+    "pinia": "^2.1.7",
+    "socket.io-client": "^4.7.2",
+    "syntax-sage-server": "./server/syntax-sage-server-0.0.0.tgz"
   }
 }

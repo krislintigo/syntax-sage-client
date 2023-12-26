@@ -12,10 +12,21 @@ export default defineNuxtConfig({
   },
   modules: [
     '@element-plus/nuxt',
+    '@pinia/nuxt',
+    'nuxt-feathers-pinia',
     'nuxt-lodash',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/eslint-module',
   ],
+  app: {
+    layoutTransition: { name: 'layout', mode: 'out-in' },
+    pageTransition: { name: 'page', mode: 'out-in' },
+    head: {
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/icon.svg' }],
+      title: 'Syntax Sage',
+      htmlAttrs: { class: 'dark' },
+    },
+  },
   elementPlus: {
     themes: ['dark'],
     importStyle: 'scss',
