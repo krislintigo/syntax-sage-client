@@ -6,6 +6,10 @@ div
     el-statistic(title='Categories', :value='64', class='!w-1/3')
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({
+  layout: 'student',
+})
+</script>
 
 <style scoped lang="scss"></style>

@@ -34,10 +34,10 @@
     "@feathersjs/feathers": "^5.0.12",
     "@feathersjs/socketio-client": "^5.0.12",
     "@pinia/nuxt": "^0.5.1",
-    "feathers-pinia": "^4.1.1",
-    "nuxt-feathers-pinia": "^0.1.0",
+    "feathers-pinia": "3.0.7",
+    "nuxt-feathers-pinia": "^0.0.3",
     "pinia": "^2.1.7",
     "socket.io-client": "^4.7.2",
-    "syntax-sage-server": "./server/syntax-sage-server-0.0.0.tgz"
+    "syntax-sage-server": "./server/syntax-sage-server-0.0.1.tgz"
   }
 }

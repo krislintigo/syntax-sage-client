@@ -32,19 +32,31 @@ export default defineNuxtPlugin((nuxt) => {
     ? rest(host).fetch($fetch, OFetch)
     : socketio(io(host, { transports: ['websocket'] }))
 
-  // create the feathers client
   const feathersClient = createClient(connection, { storage, storageKey })
 
   // wrap the feathers client
   const api = createPiniaClient(feathersClient, {
     pinia: nuxt.$pinia,
-    ssr: !!process.server,
+    ssr: process.server,
     idField: '_id',
     whitelist: [],
     paramsForServer: [],
     skipGetIfExists: true,
     customSiftOperators: {},
-    services: {},
+    services: {
+      words: {
+        setupInstance(data) {
+          const defaults = {
+            original: '',
+            english: '',
+            local: '',
+            course: '',
+            categories: [],
+          }
+          return useInstanceDefaults(defaults, data)
+        },
+      },
+    },
   })
 
   return { provide: { api } }
