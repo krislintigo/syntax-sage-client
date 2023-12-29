@@ -78,7 +78,7 @@ div
   el-pagination.mt-3(
     v-model:current-page='words$.currentPage',
     v-model:page-size='words$.limit',
-    layout='prev, pager, next, sizes',
+    layout='prev, pager, next, sizes, total',
     :page-sizes='[10, 20, 50]',
     :total='words$.total'
   )

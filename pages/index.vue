@@ -100,6 +100,7 @@ const progressStatistics = ref(null)
 
 const termsQuery = computed(() => ({
   query: {
+    userId: authStore.user._id,
     // ...(filter.search && {
     //   $or: [
     //     { original: { $regex: filter.search, $options: 'i' } },
@@ -121,6 +122,7 @@ watchEffect(() => {
 
 const favoriteQuery = computed(() => ({
   query: {
+    userId: authStore.user._id,
     favorite: true,
     // ...(filter.search && {
     //   $or: [
