@@ -18,11 +18,11 @@ dependencies:
     specifier: ^0.5.1
     version: 0.5.1(typescript@5.3.3)(vue@3.3.13)
   feathers-pinia:
-    specifier: 3.0.7
-    version: 3.0.7(@feathersjs/adapter-commons@5.0.12)(@feathersjs/commons@5.0.12)(@feathersjs/feathers@5.0.12)(pinia@2.1.7)(vue@3.3.13)
+    specifier: ^4.1.1
+    version: 4.1.1(@feathersjs/adapter-commons@5.0.12)(@feathersjs/commons@5.0.12)(@feathersjs/feathers@5.0.12)(pinia@2.1.7)(vue@3.3.13)
   nuxt-feathers-pinia:
-    specifier: ^0.0.3
-    version: 0.0.3(feathers-pinia@3.0.7)
+    specifier: ^0.1.0
+    version: 0.1.0(feathers-pinia@4.1.1)
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.3.3)(vue@3.3.13)
@@ -30,8 +30,8 @@ dependencies:
     specifier: ^4.7.2
     version: 4.7.2
   syntax-sage-server:
-    specifier: ./server/syntax-sage-server-0.0.1.tgz
-    version: file:server/syntax-sage-server-0.0.1.tgz(typescript@5.3.3)
+    specifier: ./server/syntax-sage-server-0.0.3.tgz
+    version: file:server/syntax-sage-server-0.0.3.tgz(typescript@5.3.3)
 
 devDependencies:
   '@element-plus/nuxt':
@@ -5049,8 +5049,8 @@ packages:
     dependencies:
       reusify: 1.0.4
 
-  /feathers-pinia@3.0.7(@feathersjs/adapter-commons@5.0.12)(@feathersjs/commons@5.0.12)(@feathersjs/feathers@5.0.12)(pinia@2.1.7)(vue@3.3.13):
-    resolution: {integrity: sha512-Q7fOaxemcfl2GncbL9SjEGKCfD+TSoAdhTfqE3Cr6xiCNnn45WlmFh4sXGMH06UQyFTMLuTrHGg7zDx1WfAh9w==}
+  /feathers-pinia@4.1.1(@feathersjs/adapter-commons@5.0.12)(@feathersjs/commons@5.0.12)(@feathersjs/feathers@5.0.12)(pinia@2.1.7)(vue@3.3.13):
+    resolution: {integrity: sha512-bU3EbTA787awgxf5TgiRa6gBftWJLjLOOxYM12oFFg00oGohudKTl7nQDV2SVU85behY+9SptJT6BMoHPuDj8A==}
     peerDependencies:
       '@feathersjs/adapter-commons': ^5.0.0
       '@feathersjs/commons': ^5.0.0
@@ -7223,13 +7223,13 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /nuxt-feathers-pinia@0.0.3(feathers-pinia@3.0.7):
-    resolution: {integrity: sha512-5pkefmpQUCh5/lGor2HVjaIVwzfx5NuxjC0Vt12kl3DZdgovE1ISyjZVA/lqlz9RTLeI8xvvxf9PVoEX5qQtRw==}
+  /nuxt-feathers-pinia@0.1.0(feathers-pinia@4.1.1):
+    resolution: {integrity: sha512-15zVOA/Sfa0LpSv7yhiYNfvJMVIyY0zKQFRvE0r7jdXivd5eEtLFU8jXMgKdubIX3bePHmjrVhUTLiWahGKpFQ==}
     peerDependencies:
-      feathers-pinia: ^3.0.0-pre.6
+      feathers-pinia: ^3.0.0 || ^4.0.0
     dependencies:
       '@nuxt/kit': 3.9.0
-      feathers-pinia: 3.0.7(@feathersjs/adapter-commons@5.0.12)(@feathersjs/commons@5.0.12)(@feathersjs/feathers@5.0.12)(pinia@2.1.7)(vue@3.3.13)
+      feathers-pinia: 4.1.1(@feathersjs/adapter-commons@5.0.12)(@feathersjs/commons@5.0.12)(@feathersjs/feathers@5.0.12)(pinia@2.1.7)(vue@3.3.13)
     transitivePeerDependencies:
       - rollup
       - supports-color
@@ -10340,11 +10340,11 @@ packages:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false
 
-  file:server/syntax-sage-server-0.0.1.tgz(typescript@5.3.3):
-    resolution: {integrity: sha512-yh+zRIh/xVpHftPBTsecBIJMx7Dod1eBJH5pZcbt+eWl7qWn611aSUNvO57oGAegWi4RoAxAeWpY/qLeNVcqdg==, tarball: file:server/syntax-sage-server-0.0.1.tgz}
-    id: file:server/syntax-sage-server-0.0.1.tgz
+  file:server/syntax-sage-server-0.0.3.tgz(typescript@5.3.3):
+    resolution: {integrity: sha512-bFPZGPiVoGsLKu5u+o3aONxhsiojwEyGr3KEI2fKR9PT/mALaJ+YDIp2xTZWFjS5BXUxPb0B5SjvCYFV4f/ZqQ==, tarball: file:server/syntax-sage-server-0.0.3.tgz}
+    id: file:server/syntax-sage-server-0.0.3.tgz
     name: syntax-sage-server
-    version: 0.0.1
+    version: 0.0.3
     engines: {node: '>= 18.14.2'}
     dependencies:
       '@feathersjs/adapter-commons': 5.0.12

@@ -44,14 +44,37 @@ export default defineNuxtPlugin((nuxt) => {
     skipGetIfExists: true,
     customSiftOperators: {},
     services: {
+      users: {
+        setupInstance(data) {
+          const defaults = {
+            roles: [],
+          }
+          return useInstanceDefaults(defaults, data)
+        },
+      },
       words: {
         setupInstance(data) {
           const defaults = {
             original: '',
-            english: '',
             local: '',
+            english: '',
+            notes: '',
             course: '',
             categories: [],
+          }
+          return useInstanceDefaults(defaults, data)
+        },
+      },
+      terms: {
+        setupInstance(data) {
+          const defaults = {
+            favorite: false,
+            studies: {
+              match: 0,
+              audio: 0,
+              writing: 0,
+            },
+            lastStudiedAt: '',
           }
           return useInstanceDefaults(defaults, data)
         },

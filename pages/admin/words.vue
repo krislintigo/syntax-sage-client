@@ -1,9 +1,14 @@
 <template lang="pug">
 div
-  h2.text-xl Adding new
   el-button.my-2(type='primary', @click='addNew') Add new
-  el-button.my-2(type='primary', @click='auth') Auth
-  el-row
+  h3 Filters
+  el-row.gap-x-3
+    el-input(
+      v-model='filter.search',
+      placeholder='Search',
+      :suffix-icon='ElIconSearch',
+      class='!w-60'
+    )
     el-select(v-model='filter.course')
       el-option(
         v-for='item in COURSES',
@@ -12,7 +17,8 @@ div
         :value='item.value'
       )
     el-button.ml-3(:icon='ElIconClose', circle, @click='filter.course = ""')
-  el-card.my-5(v-if='word')
+  h3.mt-5 Form
+  el-card(v-if='word')
     el-form(ref='form', :model='word', :rules='rules')
       el-row.gap-x-5
         el-form-item(label='Original', prop='original')
@@ -21,6 +27,8 @@ div
           el-input(v-model='word.english')
         el-form-item(label='Local', prop='local')
           el-input(v-model='word.local')
+        el-form-item(label='Notes', prop='notes')
+          el-input(v-model='word.notes')
         el-form-item(label='Course', prop='course')
           el-select(v-model='word.course')
             el-option(
@@ -37,20 +45,43 @@ div
               :label='item.title',
               :value='item.value'
             )
-        el-button(type='primary', @click='save') Add
-  client-only
-    el-table(v-loading='isPending', :data='data')
-      el-table-column(prop='original', label='Original')
-      el-table-column(prop='english', label='English')
-      el-table-column(prop='local', label='Local')
-      el-table-column(prop='course', label='Course')
-    el-pagination.mt-3(
-      v-model:current-page='currentPage',
-      v-model:page-size='limit',
-      layout='prev, pager, next, sizes',
-      :page-sizes='[10, 20, 50]',
-      :total='total'
-    )
+        el-button(type='primary', @click='save') {{ word._id ? 'Save' : 'Add' }}
+  el-table(v-loading='words$.isPending', :data='words$.data')
+    el-table-column(prop='original', label='Original')
+    el-table-column(prop='local', label='Local')
+    el-table-column(prop='english', label='English')
+    el-table-column(prop='notes', label='Notes')
+    el-table-column(prop='course', label='Course')
+    el-table-column
+      template(#default='{ row: item }')
+        el-button(
+          type='primary',
+          circle,
+          size='small',
+          :icon='ElIconEditPen',
+          @click='edit(item)'
+        )
+        el-popconfirm(
+          title='Delete?',
+          width='150',
+          confirm-button-text='Yes',
+          cancel-button-text='No',
+          @confirm='remove(item)'
+        )
+          template(#reference)
+            el-button(
+              :icon='ElIconDelete',
+              type='danger',
+              size='small',
+              circle
+            )
+  el-pagination.mt-3(
+    v-model:current-page='words$.currentPage',
+    v-model:page-size='words$.limit',
+    layout='prev, pager, next, sizes',
+    :page-sizes='[10, 20, 50]',
+    :total='words$.total'
+  )
 </template>
 
 <script setup lang="ts">
@@ -58,6 +89,7 @@ import type { FormRules } from 'element-plus'
 
 definePageMeta({
   layout: 'admin',
+  permission: [],
 })
 
 const rules: FormRules = {
@@ -68,17 +100,18 @@ const rules: FormRules = {
       trigger: 'change',
     },
   ],
-  english: [
-    {
-      required: true,
-      message: 'Enter english',
-      trigger: 'change',
-    },
-  ],
+
   local: [
     {
       required: true,
       message: 'Enter local',
+      trigger: 'change',
+    },
+  ],
+  english: [
+    {
+      required: true,
+      message: 'Enter english',
       trigger: 'change',
     },
   ],
@@ -97,18 +130,24 @@ const authStore = useAuthStore()
 const form = ref<any>(null)
 const word = ref(api.service('words').new())
 const filter = reactive({
+  search: '',
   course: '',
 })
 
 const query = computed(() => ({
   query: {
     ...(filter.course && { course: filter.course }),
+    ...(filter.search && {
+      $or: [
+        { original: { $regex: filter.search, $options: 'i' } },
+        { english: { $regex: filter.search, $options: 'i' } },
+        { local: { $regex: filter.search, $options: 'i' } },
+      ],
+    }),
   },
 }))
 
-const { data, total, isPending, currentPage, limit } = api
-  .service('words')
-  .useFind(query, { paginateOn: 'server' })
+const words$ = api.service('words').useFind(query, { paginateOn: 'server' })
 
 const validate = async () => {
   try {
@@ -119,26 +158,32 @@ const validate = async () => {
   }
 }
 
-const auth = async () => {
-  await authStore.authenticate({
-    strategy: 'local',
-    login: 'test',
-    password: 'test',
-  })
-  ElMessage.success('Authenticated')
+const addNew = async () => {
+  word.value = api.service('words').new()
+  setTimeout(() => {
+    form.value.clearValidate()
+  }, 50)
 }
 
-const addNew = () => {
-  word.value = api.service('words').new()
+const edit = ({ _id }: any) => {
+  word.value = api.service('words').getFromStore(_id, { clones: true }).value
 }
+
+const remove = async ({ _id }: any) => {
+  await api.service('words').remove(_id)
+  ElMessage.success('Word removed')
+}
+
 const save = async () => {
-  // console.log(word.value)
   const valid = await validate()
   if (!valid) return ElMessage.warning('Form is not valid')
-  ElMessage.success('Word added')
+  ElMessage.success('Word saved')
   await word.value.save()
+  word.value.reset()
   word.value = api.service('words').new()
-  await form.value.resetFields()
+  setTimeout(() => {
+    form.value.clearValidate()
+  }, 50)
 }
 </script>
 

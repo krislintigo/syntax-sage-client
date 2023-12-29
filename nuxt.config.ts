@@ -43,7 +43,13 @@ export default defineNuxtConfig({
   },
   eslint: {},
   imports: {
-    dirs: ['composables/**', 'stores/**', 'constants/**'],
+    dirs: [
+      'composables/**',
+      'stores/**',
+      'constants/**',
+      'utils/**',
+      'helpers/**',
+    ],
   },
   typescript: {
     shim: false,
