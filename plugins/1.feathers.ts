@@ -10,6 +10,9 @@ import rest from '@feathersjs/rest-client'
 import socketio from '@feathersjs/socketio-client'
 import io from 'socket.io-client'
 
+// other imports
+import dayjs from 'dayjs'
+
 /**
  * Creates a Feathers Rest client for the SSR server and a Socket.io client for the browser.
  * Also provides a cookie-storage adapter for JWT SSR using Nuxt APIs.
@@ -20,7 +23,9 @@ export default defineNuxtPlugin((nuxt) => {
 
   // Store JWT in a cookie for SSR.
   const storageKey = 'feathers-jwt'
-  const jwt = useCookie<string | null>(storageKey)
+  const jwt = useCookie<string | null>(storageKey, {
+    expires: dayjs().add(14, 'days').toDate(),
+  })
   const storage = {
     getItem: () => jwt.value,
     setItem: (_: string, val: string) => (jwt.value = val),
