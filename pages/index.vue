@@ -1,5 +1,15 @@
 <template lang="pug">
 div
+  client-only
+    el-dialog(
+      v-model='detailDialog.visible',
+      width='90%',
+      :title='detailDialog.term?.word.original'
+    )
+      .flex.flex-col.gap-y-1
+        h3 Matches: {{ detailDialog.term?.studies.match }}
+        h3 Audio: {{ detailDialog.term?.studies.audio }}
+        h3 Writing: {{ detailDialog.term?.studies.writing }}
   el-input.mb-5(
     v-model='filter.search',
     placeholder='Search in dictionary...',
@@ -31,6 +41,7 @@ div
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
       template(v-if='page === "terms"')
+        // TERMS
         template(v-if='progressStatistics')
           ProgressCard(
             v-for='(stat, key) in progressStatistics',
@@ -46,15 +57,18 @@ div
           :key='term._id',
           :word='term.word',
           :favorite='term.favorite',
-          @favorite-click='changeFavorite(term)'
+          @favorite-click='changeFavorite(term)',
+          @click='openTermDetail(term)'
         )
       template(v-if='page === "favourites"')
+        el-button(@click='startLearning') Learn words
         WordCard(
           v-for='term in favorite$.data',
           :key='term._id',
           :word='term.word',
           :favorite='term.favorite',
-          @favorite-click='changeFavorite(term)'
+          @favorite-click='changeFavorite(term)',
+          @click='openTermDetail(term)'
         )
       template(v-if='page === "unstudied"')
         // UNSTUDIED
@@ -87,8 +101,13 @@ definePageMeta({
 
 const { api } = useFeathers()
 const authStore = useAuthStore()
+const testStore = useTestStore()
 
 const page = ref<'terms' | 'favourites' | 'unstudied'>('terms')
+const detailDialog = reactive({
+  visible: false,
+  term: null as Term | null,
+})
 const toStudy = reactive({
   isSelect: false,
   ids: [] as string[],
@@ -164,6 +183,21 @@ const changeFavorite = async ({ _id, favorite }: Term) => {
   term.value.favorite = !favorite
   await term.value.save()
   term.value.reset()
+}
+
+const openTermDetail = (term: Term) => {
+  detailDialog.visible = true
+  detailDialog.term = term
+}
+
+const startLearning = async () => {
+  testStore.start({
+    questions: 3,
+    termsToTest: favorite$.data,
+    allTerms: terms$.data,
+    questionTypes: [],
+  })
+  await navigateTo('/test')
 }
 
 const cardClickHandler = (word: Word) => {
