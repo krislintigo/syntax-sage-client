@@ -3,14 +3,14 @@ el-card(shadow='never', class='!border-0')
   el-row(justify='space-between')
     h3.text-2xl {{ word.original }}
     div
-      el-button(circle, text, @click='playAudio')
+      el-button(circle, text, @click.stop='playAudio')
         el-icon(size='20')
           ElIconMicrophone
       el-button(
         circle,
         text,
         :type='favorite ? "warning" : "info"',
-        @click='$emit("favorite-click")'
+        @click.stop='$emit("favorite-click")'
       )
         el-icon(:size='favorite ? "25" : "20"')
           component(:is='favorite ? ElIconStarFilled : ElIconStar')
@@ -26,7 +26,7 @@ const props = defineProps<{
   favorite?: boolean
 }>()
 
-const emit = defineEmits<{
+defineEmits<{
   (e: 'favorite-click'): void
 }>()
 
