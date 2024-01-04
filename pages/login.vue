@@ -26,14 +26,14 @@ const rules: FormRules = {
   login: [
     {
       required: true,
-      message: 'Enter original',
+      message: 'Enter login',
       trigger: 'change',
     },
   ],
   password: [
     {
       required: true,
-      message: 'Enter english',
+      message: 'Enter password',
       trigger: 'change',
     },
   ],
@@ -50,6 +50,8 @@ const authData = reactive({
 
 const validate = async () => {
   try {
+    authData.login = authData.login.trim()
+    authData.password = authData.password.trim()
     await form.value.validate()
     return true
   } catch (error) {
@@ -74,7 +76,7 @@ const register = async () => {
 const login = async () => {
   try {
     const valid = await validate()
-    if (!valid) return ElMessage.warning('Form is not valid')
+    if (!valid) return ElMessage.warning('Please fill out all fields correctly')
     await authStore.authenticate({ strategy: 'local', ...authData })
     await navigateTo('/')
   } catch (e: any) {

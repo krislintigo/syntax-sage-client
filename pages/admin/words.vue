@@ -97,7 +97,7 @@ const rules: FormRules = {
     {
       required: true,
       message: 'Enter original',
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
 
@@ -105,27 +105,26 @@ const rules: FormRules = {
     {
       required: true,
       message: 'Enter local',
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
   english: [
     {
       required: true,
       message: 'Enter english',
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
   course: [
     {
       required: true,
       message: 'Select course',
-      trigger: 'change',
+      trigger: 'blur',
     },
   ],
 }
 
 const { api } = useFeathers()
-const authStore = useAuthStore()
 
 const form = ref<any>(null)
 const word = ref(api.service('words').new())
@@ -151,6 +150,10 @@ const words$ = api.service('words').useFind(query, { paginateOn: 'server' })
 
 const validate = async () => {
   try {
+    word.value.original = word.value.original.trim()
+    word.value.local = word.value.local.trim()
+    word.value.english = word.value.english.trim()
+    word.value.notes = word.value.notes.trim()
     await form.value.validate()
     return true
   } catch (error) {
@@ -158,11 +161,8 @@ const validate = async () => {
   }
 }
 
-const addNew = async () => {
+const addNew = () => {
   word.value = api.service('words').new()
-  setTimeout(() => {
-    form.value.clearValidate()
-  }, 50)
 }
 
 const edit = ({ _id }: any) => {
@@ -170,6 +170,7 @@ const edit = ({ _id }: any) => {
 }
 
 const remove = async ({ _id }: any) => {
+  if (word.value._id === _id) addNew()
   await api.service('words').remove(_id)
   ElMessage.success('Word removed')
 }
@@ -180,10 +181,7 @@ const save = async () => {
   ElMessage.success('Word saved')
   await word.value.save()
   word.value.reset()
-  word.value = api.service('words').new()
-  setTimeout(() => {
-    form.value.clearValidate()
-  }, 50)
+  addNew()
 }
 </script>
 
