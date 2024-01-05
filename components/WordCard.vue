@@ -7,6 +7,7 @@ el-card(shadow='never', class='!border-0')
         el-icon(size='20')
           ElIconMicrophone
       el-button(
+        v-if='!hideFavorite',
         circle,
         text,
         :type='favorite ? "warning" : "info"',
@@ -24,6 +25,7 @@ el-card(shadow='never', class='!border-0')
 const props = defineProps<{
   word: Word
   favorite?: boolean
+  hideFavorite?: boolean
 }>()
 
 defineEmits<{
