@@ -25,9 +25,10 @@
   .flex.flex-col.justify-between.relative(v-if='currentQuestion', class='h-[95%]')
     h3.mt-16.text-4xl {{ currentQuestion.data.question }}
     .flex.flex-col.gap-y-3.mx-3
-      .p-4.border-2.border-gray-500.rounded-lg(
+      .p-4.border-2.rounded-lg(
         v-for='option in currentQuestion.data.options',
         :key='option.value',
+        :class='getOptionColorClass(option)',
         @click='checkAnswer(option.value)'
       )
         h4 {{ option.value }}
@@ -38,9 +39,15 @@ definePageMeta({
   layout: 'default',
 })
 
-const { api } = useFeathers()
 const testStore = useTestStore()
+if (!testStore.questions.length) {
+  navigateTo('/')
+}
 
+const answer = reactive({
+  value: '',
+  correct: false,
+})
 const error = reactive({
   dialog: false,
   question: '',
@@ -53,13 +60,26 @@ const currentQuestion = computed(
   () => testStore.questions[progress.value.current],
 )
 
-const checkAnswer = async (answer: string) => {
-  // if (error.dialog) return
-  const correct = answer === currentQuestion.value.data.correct
+const getOptionColorClass = (option: { value: string }) => {
+  if (!answer.value) return 'border-gray-500'
+
+  if (option.value === currentQuestion.value.data.correct) {
+    return 'border-green-500'
+  }
+  if (!answer.correct && option.value === answer.value) {
+    return 'border-red-500'
+  }
+  return 'border-gray-500'
+}
+
+const checkAnswer = async (_answer: string) => {
+  const correct = _answer === currentQuestion.value.data.correct
+  answer.value = _answer
+  answer.correct = correct
   if (!correct) {
     error.dialog = true
     error.question = currentQuestion.value.data.question
-    error.answered = answer
+    error.answered = answer.value
     error.correct = currentQuestion.value.data.correct
     return
   }
@@ -72,10 +92,13 @@ const checkAnswer = async (answer: string) => {
 
 const nextQuestion = () => {
   error.dialog = false
-  testStore.progress.current += 1
-  if (progress.value.current === progress.value.total) {
-    return navigateTo('/')
-  }
+  setTimeout(() => {
+    answer.value = ''
+    progress.value.current += 1
+    if (progress.value.current === progress.value.total) {
+      return navigateTo('/')
+    }
+  }, 300)
 }
 </script>
 

@@ -78,7 +78,7 @@ div
           @click='openTermDetail(term)'
         )
       template(v-if='page === "favourites"')
-        .border-2.rounded-xl.border-gray-500.p-4.mb-3
+        .border-2.rounded-xl.border-gray-600.p-4.mb-3
           h3.text-xl.text-center.mb-5 Keep learning!
           el-row.gap-x-3(justify='space-between', align='middle')
             h4.w-20 Number of questions
@@ -87,6 +87,10 @@ div
               :max='favorite$.total',
               :min='2'
             )
+          .my-5
+          el-row.gap-x-3(justify='space-between', align='middle')
+            h4.w-20 Types of questions
+            span Will be available soon...
           .mt-4
           el-row(justify='center')
             el-button.w-full(
