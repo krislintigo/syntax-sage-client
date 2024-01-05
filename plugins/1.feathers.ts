@@ -47,7 +47,7 @@ export default defineNuxtPlugin((nuxt) => {
     ssr: process.server,
     idField: '_id',
     whitelist: [],
-    paramsForServer: [],
+    paramsForServer: ['$paginate'],
     skipGetIfExists: true,
     customSiftOperators: {},
     services: {
