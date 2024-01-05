@@ -12,11 +12,11 @@
     )
       p.text-xl.font-semibold {{ error.question }}
       .mb-5
-      p.text-sm.text-red-500 You said:
-      h4.text-xl {{ error.answered }}
-      .mb-5
       p.text-sm.text-green-600 Correct:
       h4.text-xl {{ error.correct }}
+      .mb-5
+      p.text-sm.text-red-500 You said:
+      h4.text-xl {{ error.answered }}
       el-button.w-full.mt-5(plain, @click='nextQuestion') Next
   el-progress.mb-4(
     :percentage='(progress.current / progress.total) * 100',

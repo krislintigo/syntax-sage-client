@@ -4,18 +4,35 @@ div
     el-dialog(
       v-model='detailDialog.visible',
       width='90%',
-      :title='detailDialog.term?.word.original'
+      :title='detailDialog.term?.word.original',
+      align-center
     )
       .flex.flex-col.gap-y-1
         h3 Matches: {{ detailDialog.term?.studies.match }}
         h3 Audio: {{ detailDialog.term?.studies.audio }}
         h3 Writing: {{ detailDialog.term?.studies.writing }}
-  el-input.mb-5(
-    v-model='filter.search',
-    placeholder='Search in dictionary...',
-    :suffix-icon='ElIconSearch',
-    size='large'
-  )
+  .mb-5
+    el-input.mb-3(
+      v-model='filter.search',
+      placeholder='Search in dictionary...',
+      :suffix-icon='ElIconSearch',
+      size='large'
+    )
+    client-only
+      el-select.w-full(
+        v-model='filter.categories',
+        placeholder='Categories',
+        multiple,
+        size='large',
+        collapse-tags,
+        collapse-tags-tooltip
+      )
+        el-option(
+          v-for='item in CATEGORIES',
+          :key='item.value',
+          :label='item.title',
+          :value='item.value'
+        )
   el-row.text-center(justify='space-evenly')
     el-col(:span='6')
       el-statistic(
@@ -61,7 +78,22 @@ div
           @click='openTermDetail(term)'
         )
       template(v-if='page === "favourites"')
-        el-button(@click='startLearning') Learn words
+        .border-2.rounded-xl.border-gray-500.p-4.mb-3
+          h3.text-xl.text-center.mb-5 Keep learning!
+          el-row.gap-x-3(justify='space-between', align='middle')
+            h4.w-20 Number of questions
+            el-input-number(
+              v-model='learnSettings.questions',
+              :max='favorite$.total',
+              :min='2'
+            )
+          .mt-4
+          el-row(justify='center')
+            el-button.w-full(
+              type='primary',
+              size='large',
+              @click='startLearning'
+            ) Start test
         WordCard(
           v-for='term in favorite$.data',
           :key='term._id',
@@ -88,9 +120,14 @@ div
         )
           el-checkbox(
             v-if='toStudy.isSelect',
-            :model-value='toStudy.ids.includes(word._id)'
+            :model-value='toStudy.ids.includes(word._id)',
+            @click='pushToStudy(word)'
           ) {{  }}
-          WordCard.grow(:word='word', @click='cardClickHandler(word)')
+          WordCard.grow(
+            :word='word',
+            hide-favorite,
+            @click='pushToStudy(word)'
+          )
 </template>
 
 <script setup lang="ts">
@@ -114,20 +151,37 @@ const toStudy = reactive({
 })
 const filter = reactive({
   search: '',
+  categories: [] as string[],
 })
 const progressStatistics = ref(null)
+
+const learnSettings = reactive({
+  questions: 10,
+  questionTypes: [] as string[],
+})
+
+const wordJoin = computed(() => filter.search || filter.categories.length)
 
 const termsQuery = computed(() => ({
   query: {
     userId: authStore.user._id,
-    // ...(filter.search && {
-    //   $or: [
-    //     { original: { $regex: filter.search, $options: 'i' } },
-    //     { english: { $regex: filter.search, $options: 'i' } },
-    //     { local: { $regex: filter.search, $options: 'i' } },
-    //   ],
-    // }),
-    $limit: 100,
+    ...(wordJoin.value && {
+      word: {
+        ...(filter.search && {
+          $or: [
+            { original: { $regex: filter.search, $options: 'i' } },
+            { english: { $regex: filter.search, $options: 'i' } },
+            { local: { $regex: filter.search, $options: 'i' } },
+          ],
+        }),
+        ...(filter.categories.length && {
+          categories: {
+            $in: filter.categories,
+          },
+        }),
+      },
+    }),
+    $paginate: false,
   },
 }))
 
@@ -143,14 +197,23 @@ const favoriteQuery = computed(() => ({
   query: {
     userId: authStore.user._id,
     favorite: true,
-    // ...(filter.search && {
-    //   $or: [
-    //     { original: { $regex: filter.search, $options: 'i' } },
-    //     { english: { $regex: filter.search, $options: 'i' } },
-    //     { local: { $regex: filter.search, $options: 'i' } },
-    //   ],
-    // }),
-    $limit: 100,
+    ...(wordJoin.value && {
+      word: {
+        ...(filter.search && {
+          $or: [
+            { original: { $regex: filter.search, $options: 'i' } },
+            { english: { $regex: filter.search, $options: 'i' } },
+            { local: { $regex: filter.search, $options: 'i' } },
+          ],
+        }),
+        ...(filter.categories.length && {
+          categories: {
+            $in: filter.categories,
+          },
+        }),
+      },
+    }),
+    $paginate: false,
   },
 }))
 
@@ -168,7 +231,12 @@ const unstudiedQuery = computed(() => ({
         { local: { $regex: filter.search, $options: 'i' } },
       ],
     }),
-    $limit: 100,
+    ...(filter.categories.length && {
+      categories: {
+        $in: filter.categories,
+      },
+    }),
+    $paginate: false,
   },
 }))
 
@@ -192,15 +260,15 @@ const openTermDetail = (term: Term) => {
 
 const startLearning = async () => {
   testStore.start({
-    questions: 3,
+    questions: learnSettings.questions,
     termsToTest: favorite$.data,
     allTerms: terms$.data,
-    questionTypes: [],
+    questionTypes: learnSettings.questionTypes,
   })
   await navigateTo('/test')
 }
 
-const cardClickHandler = (word: Word) => {
+const pushToStudy = (word: Word) => {
   if (!toStudy.isSelect) return
   if (toStudy.ids.includes(word._id)) {
     toStudy.ids = toStudy.ids.filter((id) => id !== word._id)

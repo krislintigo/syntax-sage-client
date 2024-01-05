@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  el-button.my-2(type='primary', @click='addNew') Add new
+  el-button.my-2(type='primary', @click='addNew') Reset form (add new)
   h3 Filters
   el-row.gap-x-3
     el-input(
@@ -23,10 +23,10 @@ div
       el-row.gap-x-5
         el-form-item(label='Original', prop='original')
           el-input(v-model='word.original')
-        el-form-item(label='English', prop='english')
-          el-input(v-model='word.english')
         el-form-item(label='Local', prop='local')
           el-input(v-model='word.local')
+        el-form-item(label='English', prop='english')
+          el-input(v-model='word.english')
         el-form-item(label='Notes', prop='notes')
           el-input(v-model='word.notes')
         el-form-item(label='Course', prop='course')
@@ -86,6 +86,7 @@ div
 
 <script setup lang="ts">
 import type { FormRules } from 'element-plus'
+import { ElMessageBox } from '#imports'
 
 definePageMeta({
   layout: 'admin',
@@ -178,8 +179,29 @@ const remove = async ({ _id }: any) => {
 const save = async () => {
   const valid = await validate()
   if (!valid) return ElMessage.warning('Form is not valid')
-  ElMessage.success('Word saved')
+
+  const duplicate = await api.service('words').find({
+    query: {
+      original: word.value.original,
+      course: word.value.course,
+      $limit: 1,
+    },
+  })
+  if (duplicate.total) {
+    const result = await ElMessageBox.confirm(
+      `Found duplicate for ${duplicate.data[0].original} - ${duplicate.data[0].local}`,
+      'Duplicate',
+      {
+        confirmButtonText: 'Still save',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      },
+    ).catch(() => false)
+    if (!result) return
+  }
+
   await word.value.save()
+  ElMessage.success('Word saved')
   word.value.reset()
   addNew()
 }
