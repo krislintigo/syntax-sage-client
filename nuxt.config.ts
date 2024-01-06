@@ -64,5 +64,11 @@ export default defineNuxtConfig({
     prefix: '_',
     upperAfterPrefix: false,
   },
-  pwa: {},
+  pwa: {
+    manifest: {
+      name: 'Syntax Sage',
+      short_name: 'Syntax Sage',
+      theme_color: '#ffffff',
+    },
+  },
 })

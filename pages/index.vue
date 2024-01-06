@@ -33,6 +33,7 @@ div
           :label='item.title',
           :value='item.value'
         )
+  span PWA: {{ $pwa }}
   el-row.text-center(justify='space-evenly')
     el-col(:span='6')
       el-statistic(

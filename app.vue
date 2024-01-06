@@ -1,4 +1,5 @@
 <template lang="pug">
+NuxtPwaManifest
 NuxtLayout
   NuxtPage
 </template>
