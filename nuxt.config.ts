@@ -68,7 +68,8 @@ export default defineNuxtConfig({
     manifest: {
       name: 'Syntax Sage',
       short_name: 'Syntax Sage',
-      theme_color: '#ffffff',
+      theme_color: '#262727',
+      background_color: '#262727',
     },
   },
 })

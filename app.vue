@@ -1,7 +1,8 @@
 <template lang="pug">
-NuxtPwaManifest
-NuxtLayout
-  NuxtPage
+div
+  NuxtPwaManifest
+  NuxtLayout
+    NuxtPage
 </template>
 
 <script setup lang="ts"></script>
