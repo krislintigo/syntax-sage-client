@@ -18,20 +18,13 @@ export default defineNuxtConfig({
     'nuxt-lodash',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/eslint-module',
+    '@vite-pwa/nuxt',
   ],
   app: {
     layoutTransition: { name: 'layout', mode: 'out-in' },
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/icon.svg' }],
-      meta: [
-        { charset: 'utf-8' },
-        {
-          name: 'viewport',
-          content:
-            'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
-        },
-      ],
       title: 'Syntax Sage',
       htmlAttrs: { class: 'dark' },
     },
@@ -71,4 +64,5 @@ export default defineNuxtConfig({
     prefix: '_',
     upperAfterPrefix: false,
   },
+  pwa: {},
 })
