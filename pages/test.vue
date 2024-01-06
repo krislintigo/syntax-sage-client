@@ -37,6 +37,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: 'default',
+  permission: ['student'],
 })
 
 const testStore = useTestStore()

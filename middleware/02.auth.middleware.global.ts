@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware((to) => {
     const userRoles = authStore.user.roles as User['roles']
     const allowedRoles = to.meta.permission
     if (userRoles.includes('system-admin')) return
-    if (!userRoles.filter((role) => allowedRoles.includes(role)).length) {
+    if (!_intersection(userRoles, allowedRoles).length) {
       return navigateTo('/login')
     }
   } catch (e: any) {

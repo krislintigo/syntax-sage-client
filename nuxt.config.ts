@@ -13,6 +13,7 @@ export default defineNuxtConfig({
   modules: [
     '@element-plus/nuxt',
     '@pinia/nuxt',
+    '@nuxtjs/i18n',
     'nuxt-feathers-pinia',
     'nuxt-lodash',
     '@nuxtjs/tailwindcss',
@@ -23,6 +24,14 @@ export default defineNuxtConfig({
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/icon.svg' }],
+      meta: [
+        { charset: 'utf-8' },
+        {
+          name: 'viewport',
+          content:
+            'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+        },
+      ],
       title: 'Syntax Sage',
       htmlAttrs: { class: 'dark' },
     },
@@ -42,6 +51,10 @@ export default defineNuxtConfig({
     ],
   },
   eslint: {},
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+  },
   imports: {
     dirs: [
       'composables/**',

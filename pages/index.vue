@@ -14,7 +14,7 @@ div
   .mb-5
     el-input.mb-3(
       v-model='filter.search',
-      placeholder='Search in dictionary...',
+      :placeholder='t("search")',
       :suffix-icon='ElIconSearch',
       size='large'
     )
@@ -79,25 +79,28 @@ div
         )
       template(v-if='page === "favourites"')
         .border-2.rounded-xl.border-gray-600.p-4.mb-3
-          h3.text-xl.text-center.mb-5 Keep learning!
-          el-row.gap-x-3(justify='space-between', align='middle')
-            h4.w-20 Number of questions
-            el-input-number(
-              v-model='learnSettings.questions',
-              :max='favorite$.total',
-              :min='2'
-            )
-          .my-5
-          el-row.gap-x-3(justify='space-between', align='middle')
-            h4.w-20 Types of questions
-            span Will be available soon...
-          .mt-4
-          el-row(justify='center')
-            el-button.w-full(
-              type='primary',
-              size='large',
-              @click='startLearning'
-            ) Start test
+          template(v-if='terms$.total >= 2 && favorite$.total >= 1')
+            h3.text-xl.text-center.mb-5 Keep learning!
+            el-row.gap-x-3(justify='space-between', align='middle')
+              h4.w-20 Number of questions
+              el-input-number(
+                v-model='learnSettings.questions',
+                :max='favorite$.total',
+                :min='1'
+              )
+            .my-5
+            el-row.gap-x-3(justify='space-between', align='middle')
+              h4.w-20 Types of questions
+              span Will be available soon...
+            .mt-4
+            el-row(justify='center')
+              el-button.w-full(
+                type='primary',
+                size='large',
+                @click='startLearning'
+              ) Start test
+          template(v-else)
+            h3.text-xl.text-center.px-3 Add more terms to enable testing and continue learning!
         WordCard(
           v-for='term in favorite$.data',
           :key='term._id',
@@ -140,6 +143,7 @@ definePageMeta({
   permission: ['student'],
 })
 
+const { t } = useI18n({ useScope: 'local' })
 const { api } = useFeathers()
 const authStore = useAuthStore()
 const testStore = useTestStore()
@@ -248,6 +252,10 @@ const unstudied$ = api
   .service('words')
   .useFind(unstudiedQuery, { paginateOn: 'server' })
 
+watchEffect(() => {
+  learnSettings.questions = Math.min(favorite$.total, 50)
+})
+
 const changeFavorite = async ({ _id, favorite }: Term) => {
   const term = api
     .service('terms')
@@ -298,3 +306,42 @@ const studyWords = async () => {
 </script>
 
 <style scoped lang="scss"></style>
+
+<i18n lang="yaml">
+en:
+  title: Dictionary
+  terms: Terms
+  favourites: Favorites
+  unstudied: Unstudied
+  search: Search in dictionary...
+  keepLearning: Keep learning!
+  numberOfQuestions: Number of questions
+  typesOfQuestions: Types of questions
+  startTest: Start test
+  studyWords: Study words
+  cancel: Cancel
+ru:
+  title: Словарь
+  terms: Термины
+  favourites: Избранное
+  unstudied: Не изученные
+  search: Поиск в словаре...
+  keepLearning: Продолжайте учиться!
+  numberOfQuestions: Количество вопросов
+  typesOfQuestions: Типы вопросов
+  startTest: Начать тест
+  studyWords: Изучить слова
+  cancel: Отмена
+fi:
+  title: Sanakirja
+  terms: Termit
+  favourites: Suosikit
+  unstudied: Opiskelemattomat
+  search: Sanakirjahaku...
+  keepLearning: Jatka oppimista!
+  numberOfQuestions: Kysymysten määrä
+  typesOfQuestions: Kysymysten tyypit
+  startTest: Aloita testi
+  studyWords: Opiskele sanoja
+  cancel: Peruuta
+</i18n>
