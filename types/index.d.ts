@@ -10,6 +10,24 @@ declare global {
   type User = _User
   type Word = _Word
   type Term = _Term
+
+  type QuestionType = 'original-local' | 'local-original' | 'writing'
+
+  type Question = {
+    questionType: QuestionType,
+    studyType: keyof Term['studies'],
+    originalTerm: Term,
+    data: {
+      question: string,
+      correct: string,
+      options: Array<{ value: string }>
+    },
+    status: {
+      answered: boolean,
+      correct: boolean | null,
+      answer: string
+    }
+  }
 }
 
 export {}

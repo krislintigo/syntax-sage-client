@@ -33,7 +33,6 @@ div
           :label='item.title',
           :value='item.value'
         )
-  span PWA: {{ $pwa }}
   el-row.text-center(justify='space-evenly')
     el-col(:span='6')
       el-statistic(
@@ -136,6 +135,8 @@ div
             hide-favorite,
             @click='pushToStudy(word)'
           )
+  client-only
+    span PWA: {{ $pwa }}
 </template>
 
 <script setup lang="ts">
@@ -166,7 +167,7 @@ const progressStatistics = ref(null)
 
 const learnSettings = reactive({
   questions: 10,
-  questionTypes: [] as string[],
+  questionTypes: ['original-local', 'local-original'] as QuestionType[],
 })
 
 const wordJoin = computed(() => filter.search || filter.categories.length)

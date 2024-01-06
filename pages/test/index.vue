@@ -16,7 +16,7 @@
       h4.text-xl {{ error.correct }}
       .mb-5
       p.text-sm.text-red-500 You said:
-      h4.text-xl {{ error.answered }}
+      h4.text-xl {{ error.answer }}
       el-button.w-full.mt-5(plain, @click='nextQuestion') Next
   el-progress.mb-4(
     :percentage='(progress.current / progress.total) * 100',
@@ -42,17 +42,14 @@ definePageMeta({
 
 const testStore = useTestStore()
 if (!testStore.questions.length) {
-  navigateTo('/')
+  navigateTo('/', { replace: true })
 }
 
-const answer = reactive({
-  value: '',
-  correct: false,
-})
+// remove this?
 const error = reactive({
   dialog: false,
   question: '',
-  answered: '',
+  answer: '',
   correct: '',
 })
 
@@ -62,31 +59,32 @@ const currentQuestion = computed(
 )
 
 const getOptionColorClass = (option: { value: string }) => {
-  if (!answer.value) return 'border-gray-500'
+  if (!currentQuestion.value.status.answered) return 'border-gray-500'
 
   if (option.value === currentQuestion.value.data.correct) {
     return 'border-green-500'
   }
-  if (!answer.correct && option.value === answer.value) {
+  if (
+    !currentQuestion.value.status.correct &&
+    option.value === currentQuestion.value.status.answer
+  ) {
     return 'border-red-500'
   }
   return 'border-gray-500'
 }
 
 const checkAnswer = async (_answer: string) => {
-  const correct = _answer === currentQuestion.value.data.correct
-  answer.value = _answer
-  answer.correct = correct
-  if (!correct) {
+  testStore.answer(_answer)
+  if (!currentQuestion.value.status.correct) {
     error.dialog = true
     error.question = currentQuestion.value.data.question
-    error.answered = answer.value
+    error.answer = currentQuestion.value.status.answer
     error.correct = currentQuestion.value.data.correct
     return
   }
   const termToUpdate = currentQuestion.value.originalTerm.clone()
   termToUpdate.studies[currentQuestion.value.studyType] += 1
-  await termToUpdate.save() // test
+  await termToUpdate.save()
   termToUpdate.reset()
   nextQuestion()
 }
@@ -94,10 +92,9 @@ const checkAnswer = async (_answer: string) => {
 const nextQuestion = () => {
   error.dialog = false
   setTimeout(() => {
-    answer.value = ''
     progress.value.current += 1
     if (progress.value.current === progress.value.total) {
-      return navigateTo('/')
+      return navigateTo('/test/result', { replace: true })
     }
   }, 300)
 }
