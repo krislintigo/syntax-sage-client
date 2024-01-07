@@ -1,0 +1,25 @@
+courses:
+  labels:
+    rusFin: Russian - Finnish
+termStatistics:
+  labels:
+    notStudied: Not studied
+    stillLearning: Still learning
+    mastered: Mastered
+categories:
+  labels:
+    businessMoney: Business / Money
+    food: Food
+    healthFitness: Health / Fitness
+    hobbiesInterests: Hobbies / Interests
+    home: Home
+    familyRelationship: Family / Relationship
+    geography: Geography
+    natureEnvironment: Nature / Environment
+    peopleSociety: People / Society
+    politicsLaw: Politics / Law
+    scienceTechnology: Science / Technology
+    sportsGames: Sports / Games
+    travel: Travel
+    transportation: Transportation
+

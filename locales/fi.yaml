@@ -1,0 +1,25 @@
+courses:
+  labels:
+    rusFin: 0
+termStatistics:
+  labels:
+    notStudied: 0
+    stillLearning: 0
+    mastered: 0
+categories:
+  labels:
+    businessMoney: 0
+    food: 0
+    healthFitness: 0
+    hobbiesInterests: 0
+    home: Koti
+    familyRelationship: 0
+    geography: 0
+    natureEnvironment: 0
+    peopleSociety: 0
+    politicsLaw: 0
+    scienceTechnology: 0
+    sportsGames: 0
+    travel: 0
+    transportation: 0
+

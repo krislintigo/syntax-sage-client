@@ -1,0 +1,24 @@
+courses:
+  labels:
+    rusFin: Русский - Финский
+termStatistics:
+  labels:
+    notStudied: Не изучено
+    stillLearning: В процессе изучения
+    mastered: Изучено
+categories:
+  labels:
+    businessMoney: Бизнес / Деньги
+    food: Еда
+    healthFitness: Здоровье / Фитнес
+    hobbiesInterests: Хобби / Интересы
+    home: Дом
+    familyRelationship: Семья / Отношения
+    geography: География
+    natureEnvironment: Природа / Окружающая среда
+    peopleSociety: Люди / Общество
+    politicsLaw: Политика / Закон
+    scienceTechnology: Наука / Технологии
+    sportsGames: Спорт / Игры
+    travel: Путешествия
+    transportation: Транспорт
