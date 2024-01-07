@@ -15,7 +15,7 @@ el-card(shadow='never', class='!border-0')
       )
         el-icon(:size='favorite ? "25" : "20"')
           component(:is='favorite ? ElIconStarFilled : ElIconStar')
-  p {{ word.local }}
+  p.text-base {{ word.local }}
   el-row.mt-2(justify='space-between')
     p.italic.text-sm.text-gray-400 {{ word.notes }}
     p.italic.text-sm.text-gray-400 {{ word.english }}
@@ -32,13 +32,10 @@ defineEmits<{
   (e: 'favorite-click'): void
 }>()
 
+const { play } = useVoiceover()
+
 const playAudio = () => {
-  const voices = speechSynthesis
-    .getVoices()
-    .filter((voice) => voice.lang === 'fi-FI')
-  const synth = new SpeechSynthesisUtterance(props.word.original)
-  synth.voice = voices[8]
-  speechSynthesis.speak(synth)
+  play(props.word.original, { language: 'fi' })
 }
 </script>
 
