@@ -4,7 +4,7 @@
     el-dialog(
       v-model='error.dialog',
       width='90%',
-      title='Error!',
+      :title='t("error.title") + "!"',
       align-center,
       :show-close='false',
       :close-on-click-modal='false',
@@ -12,12 +12,12 @@
     )
       p.text-xl.font-semibold {{ error.question }}
       .mb-5
-      p.text-sm.text-green-600 Correct:
+      p.text-sm.text-green-600 {{ t('error.correct') }}:
       h4.text-xl {{ error.correct }}
       .mb-5
-      p.text-sm.text-red-500 You said:
+      p.text-sm.text-red-500 {{ t('error.youSaid') }}:
       h4.text-xl {{ error.answer }}
-      el-button.w-full.mt-5(plain, @click='nextQuestion') Next
+      el-button.w-full.mt-5(plain, @click='nextQuestion') {{ t('error.next') }}
   el-progress.mb-4(
     :percentage='(progress.current / progress.total) * 100',
     :show-text='false'
@@ -40,7 +40,7 @@
       .mb-16.outline.outline-1.rounded(:class='getWritingColorClass()')
         el-input.h-14(
           v-model='currentQuestion.status.answer',
-          placeholder='Type your answer here...',
+          :placeholder='t("writing.placeholder")',
           size='large',
           class='!text-lg',
           @keyup.enter='checkAnswer(currentQuestion.status.answer)'
@@ -69,7 +69,7 @@
         .outline.outline-1.rounded.mb-1(:class='getAudioColorClass()')
           el-input.h-14(
             v-model='currentQuestion.status.answer',
-            placeholder='Type your answer here...',
+            :placeholder='t("audio.placeholder")',
             size='large',
             class='!text-lg',
             @keyup.enter='checkAnswer(currentQuestion.status.answer)'
@@ -95,6 +95,8 @@ definePageMeta({
   permission: ['student'],
 })
 
+const voiceover = useCookie<Record<string, string>>('voiceover')
+const { t } = useI18n({ useScope: 'local' })
 const { play } = useVoiceover()
 const testStore = useTestStore()
 if (!testStore.questions.length) {
@@ -148,7 +150,10 @@ const getAudioColorClass = () => {
 }
 
 const playQuestion = () => {
-  play(currentQuestion.value.data.question, { language: 'fi' })
+  play(currentQuestion.value.data.question, {
+    language: 'fi-FI',
+    preset: voiceover.value?.['rus-fin'],
+  })
 }
 
 watchEffect(() => {
@@ -164,6 +169,7 @@ watchEffect(() => {
 })
 
 const checkAnswer = async (_answer: string) => {
+  if (!_answer) return
   testStore.answer(_answer)
   if (!currentQuestion.value.status.correct) {
     error.dialog = true
@@ -191,3 +197,36 @@ const nextQuestion = () => {
 </script>
 
 <style scoped lang="scss"></style>
+
+<i18n lang="yaml">
+en:
+  error:
+    title: Error
+    correct: Correct
+    youSaid: You said
+    next: Next
+  writing:
+    placeholder: Type your answer here...
+  audio:
+    placeholder: Type your answer here...
+ru:
+  error:
+    title: Ошибка
+    correct: Правильно
+    youSaid: Вы сказали
+    next: Далее
+  writing:
+    placeholder: Введите ответ здесь...
+  audio:
+    placeholder: Введите ответ здесь...
+fi:
+  error:
+    title: Virhe
+    correct: Oikein
+    youSaid: Sanoit
+    next: Seuraava
+  writing:
+    placeholder: Kirjoita vastauksesi tähän...
+  audio:
+    placeholder: Kirjoita vastauksesi tähän...
+</i18n>

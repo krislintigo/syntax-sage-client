@@ -8,22 +8,26 @@ div
       align-center
     )
       .flex.flex-col.gap-y-1
-        h3 Matches: {{ detailDialog.term?.studies.match }}
-        h3 Audio: {{ detailDialog.term?.studies.audio }}
-        h3 Writing: {{ detailDialog.term?.studies.writing }}
+        h3 {{ t('details.matches') }}: {{ detailDialog.term?.studies.match }}
+        h3 {{ t('details.writing') }}: {{ detailDialog.term?.studies.writing }}
+        h3 {{ t('details.audio') }}: {{ detailDialog.term?.studies.audio }}
   .mb-5
     el-input.mb-3(
       v-model='filter.search',
-      :placeholder='t("search")',
+      :placeholder='t("filters.search")',
       :suffix-icon='ElIconSearch',
       size='large'
     )
     client-only
       template(#fallback)
-        el-input(size='large', readonly, placeholder='Categories')
+        el-input(
+          size='large',
+          readonly,
+          :placeholder='t("filters.categories")'
+        )
       el-select.w-full(
         v-model='filter.categories',
-        placeholder='Categories',
+        :placeholder='t("filters.categories")',
         multiple,
         size='large',
         collapse-tags,
@@ -32,27 +36,27 @@ div
         el-option(
           v-for='item in CATEGORIES',
           :key='item.value',
-          :label='item.title',
+          :label='item.title($t)',
           :value='item.value'
         )
   el-row.text-center(justify='space-evenly')
     el-col(:span='6')
       el-statistic(
-        title='Terms',
+        :title='t("tabs.terms")',
         :value='terms$.total',
         @click='page = "terms"'
       )
       .bg-blue-500.h-px.mt-1(v-if='page === "terms"')
     el-col(:span='6')
       el-statistic(
-        title='Favorites',
+        :title='t("tabs.favourites")',
         :value='favorite$.total',
         @click='page = "favourites"'
       )
       .bg-blue-500.h-px.mt-1(v-if='page === "favourites"')
     el-col(:span='6')
       el-statistic(
-        title='Unstudied',
+        :title='t("tabs.unstudied")',
         :value='unstudied$.total',
         @click='page = "unstudied"'
       )
@@ -82,9 +86,9 @@ div
       template(v-if='page === "favourites"')
         .border-2.rounded-xl.border-gray-600.p-4.mb-3
           template(v-if='terms$.total >= 2 && favorite$.total >= 1')
-            h3.text-xl.text-center.mb-5 Keep learning!
+            h3.text-xl.text-center.mb-5 {{ t('settings.title') }}
             el-row.gap-x-3(justify='space-between', align='middle')
-              h4.w-20 Number of questions
+              h4.w-20 {{ t('settings.numberOfQuestions') }}
               el-input-number(
                 v-model='learnSettings.questions',
                 :max='favorite$.total',
@@ -92,7 +96,7 @@ div
               )
             .my-5
             el-row.gap-x-3(justify='space-between', align='middle')
-              h4.w-20 Types of questions
+              h4.w-20 {{ t('settings.questionTypes') }}
               span Will be available soon...
             .mt-4
             el-row(justify='center')
@@ -100,9 +104,9 @@ div
                 type='primary',
                 size='large',
                 @click='startLearning'
-              ) Start test
+              ) {{ t('settings.startTest') }}
           template(v-else)
-            h3.text-xl.text-center.px-3 Add more terms to enable testing and continue learning!
+            h3.text-xl.text-center.px-3 {{ t('settings.addMoreToContinue') }}
         WordCard(
           v-for='term in favorite$.data',
           :key='term._id',
@@ -117,10 +121,10 @@ div
           v-if='!toStudy.isSelect',
           size='large',
           @click='toStudy.isSelect = true'
-        ) Study words
+        ) {{ t('addNew.select') }}
         el-row(v-else)
-          el-button.grow(size='large', @click='cancelStudy') Cancel
-          el-button.grow(size='large', @click='studyWords') Study
+          el-button.grow(size='large', @click='cancelStudy') {{ t('addNew.cancel') }}
+          el-button.grow(size='large', @click='studyWords') {{ t('addNew.study') }}
         .mt-4
         el-row(
           v-for='word in unstudied$.data',
@@ -147,7 +151,7 @@ definePageMeta({
   permission: ['student'],
 })
 
-const { t } = useI18n({ useScope: 'local' })
+const { t } = useI18n()
 const { api } = useFeathers()
 const authStore = useAuthStore()
 const testStore = useTestStore()
@@ -325,39 +329,69 @@ const studyWords = async () => {
 
 <i18n lang="yaml">
 en:
-  title: Dictionary
-  terms: Terms
-  favourites: Favorites
-  unstudied: Unstudied
-  search: Search in dictionary...
-  keepLearning: Keep learning!
-  numberOfQuestions: Number of questions
-  typesOfQuestions: Types of questions
-  startTest: Start test
-  studyWords: Study words
-  cancel: Cancel
+  filters:
+    search: Search in dictionary...
+    categories: Categories
+  tabs:
+    terms: Terms
+    favourites: Favorites
+    unstudied: Unstudied
+  settings:
+    title: Keep learning!
+    addMoreToContinue: Add more terms to enable testing and continue learning!
+    numberOfQuestions: Number of questions
+    questionTypes: Types of questions
+    startTest: Start test
+  addNew:
+    select: Study words
+    cancel: Cancel
+    study: Study
+  details:
+    matches: Matches
+    audio: Audio
+    writing: Writing
 ru:
-  title: Словарь
-  terms: Термины
-  favourites: Избранное
-  unstudied: Не изученные
-  search: Поиск в словаре...
-  keepLearning: Продолжайте учиться!
-  numberOfQuestions: Количество вопросов
-  typesOfQuestions: Типы вопросов
-  startTest: Начать тест
-  studyWords: Изучить слова
-  cancel: Отмена
+  filters:
+    search: Поиск в словаре...
+    categories: Категории
+  tabs:
+    terms: Термины
+    favourites: Избранное
+    unstudied: Неизученные
+  settings:
+    title: Продолжайте учиться!
+    addMoreToContinue: Добавьте больше терминов, чтобы включить тестирование и продолжить обучение!
+    numberOfQuestions: Количество вопросов
+    questionTypes: Типы вопросов
+    startTest: Начать тест
+  addNew:
+    select: Изучать слова
+    cancel: Отмена
+    study: Добавить
+  details:
+    matches: Соответствие
+    audio: Аудирование
+    writing: Написание
 fi:
-  title: Sanakirja
-  terms: Termit
-  favourites: Suosikit
-  unstudied: Opiskelemattomat
-  search: Sanakirjahaku...
-  keepLearning: Jatka oppimista!
-  numberOfQuestions: Kysymysten määrä
-  typesOfQuestions: Kysymysten tyypit
-  startTest: Aloita testi
-  studyWords: Opiskele sanoja
-  cancel: Peruuta
+  filters:
+    search: Etsi sanakirjasta...
+    categories: Kategoriat
+  tabs:
+    terms: Termit
+    favourites: Suosikit
+    unstudied: Opiskelemattomat
+  settings:
+    title: Jatka oppimista!
+    addMoreToContinue: Lisää sanoja, jotta voit testata ja jatkaa oppimista!
+    numberOfQuestions: Kysymysten määrä
+    questionTypes: Kysymysten tyypit
+    startTest: Aloita testi
+  addNew:
+    select: Opiskele sanoja
+    cancel: Peruuta
+    study: Add
+  details:
+    matches: Osumat
+    audio: Ääni
+    writing: Kirjoitus
 </i18n>

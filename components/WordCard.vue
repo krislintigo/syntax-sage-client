@@ -33,9 +33,13 @@ defineEmits<{
 }>()
 
 const { play } = useVoiceover()
+const voiceover = useCookie<Record<string, string>>('voiceover')
 
 const playAudio = () => {
-  play(props.word.original, { language: 'fi' })
+  play(props.word.original, {
+    language: 'fi-FI',
+    preset: voiceover.value?.['rus-fin'],
+  })
 }
 </script>
 

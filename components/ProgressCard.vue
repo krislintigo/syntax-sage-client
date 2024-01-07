@@ -10,18 +10,20 @@ el-card(shadow='never', class='!border-0')
       )
         template(#default)
           p.font-medium.text-sm {{ count }}
-      h4.font-medium {{ title }}
+      h4.font-medium.text-base {{ title(t) }}
     el-icon(size='20')
       ElIconArrowRightBold
 </template>
 
 <script setup lang="ts">
 defineProps<{
-  title: string
+  title: (t: any) => string
   color: string
   percentage: number
   count: number
 }>()
+
+const { t } = useI18n()
 </script>
 
 <style scoped lang="scss"></style>
