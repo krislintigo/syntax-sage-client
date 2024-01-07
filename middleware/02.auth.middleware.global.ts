@@ -13,7 +13,6 @@ export default defineNuxtRouteMiddleware((to) => {
       return navigateTo('/login')
     }
   } catch (e: any) {
-    console.log('error!', e)
     return navigateTo('/login')
   }
 })

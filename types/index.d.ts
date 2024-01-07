@@ -11,7 +11,7 @@ declare global {
   type Word = _Word
   type Term = _Term
 
-  type QuestionType = 'original-local' | 'local-original' | 'writing'
+  type QuestionType = 'original-local' | 'local-original' | 'writing' | 'audio-local' | 'audio-original'
 
   type Question = {
     questionType: QuestionType,
