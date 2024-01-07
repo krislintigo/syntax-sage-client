@@ -45,8 +45,14 @@ export default defineNuxtConfig({
   },
   eslint: {},
   i18n: {
+    locales: [
+      { code: 'en', iso: 'en-US', file: 'en.yaml' },
+      { code: 'ru', iso: 'ru-RU', file: 'ru.yaml' },
+      { code: 'fi', iso: 'fi-FI', file: 'fi.yaml' },
+    ],
     strategy: 'no_prefix',
     defaultLocale: 'en',
+    langDir: 'locales/',
   },
   imports: {
     dirs: [
