@@ -23,15 +23,70 @@
     :show-text='false'
   )
   .flex.flex-col.justify-between.relative(v-if='currentQuestion', class='h-[95%]')
-    h3.mt-16.text-4xl {{ currentQuestion.data.question }}
-    .flex.flex-col.gap-y-3.mx-3
-      .p-4.border-2.rounded-lg(
-        v-for='option in currentQuestion.data.options',
-        :key='option.value',
-        :class='getOptionColorClass(option)',
-        @click='checkAnswer(option.value)'
-      )
-        h4 {{ option.value }}
+    template(
+      v-if='["original-local", "local-original"].includes(currentQuestion.questionType)'
+    )
+      h3.mt-16.text-4xl {{ currentQuestion.data.question }}
+      .flex.flex-col.gap-y-3.mx-3
+        .p-4.border-2.rounded-lg(
+          v-for='option in currentQuestion.data.options',
+          :key='option.value',
+          :class='getOptionColorClass(option)',
+          @click='checkAnswer(option.value)'
+        )
+          h4.text-base {{ option.value }}
+    template(v-if='currentQuestion.questionType === "writing"')
+      h3.mt-16.text-4xl {{ currentQuestion.data.question }}
+      .mb-16.outline.outline-1.rounded(:class='getWritingColorClass()')
+        el-input.h-14(
+          v-model='currentQuestion.status.answer',
+          placeholder='Type your answer here...',
+          size='large',
+          class='!text-lg',
+          @keyup.enter='checkAnswer(currentQuestion.status.answer)'
+        )
+          template(#append)
+            el-button(
+              type='primary',
+              @click='checkAnswer(currentQuestion.status.answer)'
+            )
+              el-icon
+                ElIconCheck
+    template(
+      v-if='["audio-original", "audio-local"].includes(currentQuestion.questionType)'
+    )
+      el-row.mt-8(justify='center')
+        el-button(
+          type='primary',
+          circle,
+          size='large',
+          class='!w-32 !h-32',
+          @click='playQuestion'
+        )
+          el-icon(size='100')
+            ElIconMicrophone
+      .mb-16
+        .outline.outline-1.rounded.mb-1(:class='getAudioColorClass()')
+          el-input.h-14(
+            v-model='currentQuestion.status.answer',
+            placeholder='Type your answer here...',
+            size='large',
+            class='!text-lg',
+            @keyup.enter='checkAnswer(currentQuestion.status.answer)'
+          )
+            template(#append)
+              el-button(
+                type='primary',
+                @click='checkAnswer(currentQuestion.status.answer)'
+              )
+                el-icon
+                  ElIconCheck
+        h4.text-sm.text-center.text-gray-600(
+          v-if='currentQuestion.questionType === "audio-original"'
+        ) Finnish
+        h4.text-sm.text-center.text-gray-600(
+          v-if='currentQuestion.questionType === "audio-local"'
+        ) Russian
 </template>
 
 <script setup lang="ts">
@@ -40,6 +95,7 @@ definePageMeta({
   permission: ['student'],
 })
 
+const { play } = useVoiceover()
 const testStore = useTestStore()
 if (!testStore.questions.length) {
   navigateTo('/', { replace: true })
@@ -72,6 +128,40 @@ const getOptionColorClass = (option: { value: string }) => {
   }
   return 'border-gray-500'
 }
+
+const getWritingColorClass = () => {
+  if (!currentQuestion.value.status.answered) return 'outline-none'
+
+  if (currentQuestion.value.status.correct) {
+    return 'outline-green-500'
+  }
+  return 'outline-red-500'
+}
+
+const getAudioColorClass = () => {
+  if (!currentQuestion.value.status.answered) return 'outline-none'
+
+  if (currentQuestion.value.status.correct) {
+    return 'outline-green-500'
+  }
+  return 'outline-red-500'
+}
+
+const playQuestion = () => {
+  play(currentQuestion.value.data.question, { language: 'fi' })
+}
+
+watchEffect(() => {
+  if (!currentQuestion.value) return
+  if (
+    currentQuestion.value.questionType === 'audio-original' ||
+    currentQuestion.value.questionType === 'audio-local'
+  ) {
+    setTimeout(() => {
+      playQuestion()
+    }, 500)
+  }
+})
 
 const checkAnswer = async (_answer: string) => {
   testStore.answer(_answer)

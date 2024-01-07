@@ -6,7 +6,7 @@
       h3.text-green-500 {{ correct }} correct answers
       h3.text-red-500 {{ incorrect }} incorrect answers
       h3.text-blue-500 Result: {{ Math.round((correct / (correct + incorrect)) * 100) }} %
-    el-button(type='primary', size='large', @click='goHome') Restart
+    el-button.mb-8(type='primary', size='large', @click='goHome') Back home
 </template>
 
 <script setup lang="ts">

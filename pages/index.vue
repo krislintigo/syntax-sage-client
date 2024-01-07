@@ -19,6 +19,8 @@ div
       size='large'
     )
     client-only
+      template(#fallback)
+        el-input(size='large', readonly, placeholder='Categories')
       el-select.w-full(
         v-model='filter.categories',
         placeholder='Categories',
@@ -167,7 +169,13 @@ const progressStatistics = ref(null)
 
 const learnSettings = reactive({
   questions: 10,
-  questionTypes: ['original-local', 'local-original'] as QuestionType[],
+  questionTypes: [
+    // 'original-local',
+    // 'local-original',
+    // 'writing',
+    'audio-original',
+    'audio-local',
+  ] as QuestionType[],
 })
 
 const wordJoin = computed(() => filter.search || filter.categories.length)
@@ -198,6 +206,8 @@ const termsQuery = computed(() => ({
 const terms$ = api
   .service('terms')
   .useFind(termsQuery, { paginateOn: 'server' })
+
+terms$.isSsr && (await terms$.request)
 
 watchEffect(() => {
   progressStatistics.value = createProgressStatistics(terms$.data)
@@ -231,6 +241,8 @@ const favorite$ = api
   .service('terms')
   .useFind(favoriteQuery, { paginateOn: 'server' })
 
+favorite$.isSsr && (await favorite$.request)
+
 const unstudiedQuery = computed(() => ({
   query: {
     $intersect: authStore.user._id,
@@ -254,6 +266,8 @@ const unstudied$ = api
   .service('words')
   .useFind(unstudiedQuery, { paginateOn: 'server' })
 
+unstudied$.isSsr && (await unstudied$.request)
+
 watchEffect(() => {
   learnSettings.questions = Math.min(favorite$.total, 50)
 })
@@ -274,7 +288,7 @@ const openTermDetail = (term: Term) => {
 
 const startLearning = async () => {
   testStore.start({
-    questions: learnSettings.questions,
+    numberOfQuestions: learnSettings.questions,
     termsToTest: favorite$.data,
     allTerms: terms$.data,
     questionTypes: learnSettings.questionTypes,

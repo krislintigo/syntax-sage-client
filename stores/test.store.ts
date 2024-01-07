@@ -5,65 +5,35 @@ export const useTestStore = defineStore('test', () => {
   })
   const questions = ref<Question[]>([])
 
-  const start = (options: {
-    questions: number
+  const start = ({
+    numberOfQuestions,
+    questionTypes,
+    termsToTest,
+    allTerms,
+  }: {
+    numberOfQuestions: number
     termsToTest: Term[]
     allTerms: Term[]
     questionTypes: QuestionType[]
   }) => {
-    if (!options.questionTypes.length) return // at least one
+    if (!questionTypes.length) return // at least one
 
     progress.value = {
       current: 0,
-      total: options.questions,
+      total: numberOfQuestions,
     }
 
-    const allTestShuffled = _shuffle(options.termsToTest).slice(
-      0,
-      options.questions,
-    )
+    const allTestShuffled = _shuffle(termsToTest).slice(0, numberOfQuestions)
 
     questions.value = allTestShuffled.map((term) => {
-      const questionType =
-        options.questionTypes[_random(0, options.questionTypes.length - 1)]
+      const questionType = questionTypes[_random(0, questionTypes.length - 1)]
 
       switch (questionType) {
-        case 'original-local': {
-          const _optionsTerms = _shuffle(options.allTerms).slice(
-            0,
-            Math.min(4, options.allTerms.length),
-          )
-
-          const correctTerm = _optionsTerms.find((t) => t._id === term._id)
-          const optionsTerms = correctTerm
-            ? _optionsTerms
-            : _shuffle([
-                term,
-                ..._optionsTerms.slice(0, _optionsTerms.length - 1),
-              ])
-
-          return {
-            questionType,
-            studyType: 'match',
-            originalTerm: term,
-            data: {
-              question: term.word.original,
-              correct: term.word.local,
-              options: optionsTerms.map((term) => ({
-                value: term.word.local,
-              })),
-            },
-            status: {
-              answered: false,
-              correct: null,
-              answer: '',
-            },
-          }
-        }
+        case 'original-local':
         case 'local-original': {
-          const _optionsTerms = _shuffle(options.allTerms).slice(
+          const _optionsTerms = _shuffle(allTerms).slice(
             0,
-            Math.min(4, options.allTerms.length),
+            Math.min(4, allTerms.length),
           )
 
           const correctTerm = _optionsTerms.find((t) => t._id === term._id)
@@ -74,17 +44,26 @@ export const useTestStore = defineStore('test', () => {
                 ..._optionsTerms.slice(0, _optionsTerms.length - 1),
               ])
 
+          const question =
+            questionType === 'original-local'
+              ? term.word.original
+              : term.word.local
+          const correct =
+            questionType === 'original-local'
+              ? term.word.local
+              : term.word.original
+          const options = optionsTerms.map((term) => ({
+            value:
+              questionType === 'original-local'
+                ? term.word.local
+                : term.word.original,
+          }))
+
           return {
             questionType,
             studyType: 'match',
             originalTerm: term,
-            data: {
-              question: term.word.local,
-              correct: term.word.original,
-              options: optionsTerms.map((term) => ({
-                value: term.word.original,
-              })),
-            },
+            data: { question, correct, options },
             status: {
               answered: false,
               correct: null,
@@ -92,6 +71,7 @@ export const useTestStore = defineStore('test', () => {
             },
           }
         }
+
         case 'writing': {
           return {
             questionType,
@@ -100,6 +80,30 @@ export const useTestStore = defineStore('test', () => {
             data: {
               question: term.word.local,
               correct: term.word.original,
+              options: [],
+            },
+            status: {
+              answered: false,
+              correct: null,
+              answer: '',
+            },
+          }
+        }
+
+        // options or/and writing?
+        case 'audio-original':
+        case 'audio-local': {
+          const correct =
+            questionType === 'audio-original'
+              ? term.word.original
+              : term.word.local
+          return {
+            questionType,
+            studyType: 'audio',
+            originalTerm: term,
+            data: {
+              question: term.word.original,
+              correct,
               options: [],
             },
             status: {
