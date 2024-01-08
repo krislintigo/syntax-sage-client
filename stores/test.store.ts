@@ -113,6 +113,8 @@ export const useTestStore = defineStore('test', () => {
             },
           }
         }
+        default:
+          throw new Error('Unknown question type')
       }
     })
   }

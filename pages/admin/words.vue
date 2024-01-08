@@ -17,10 +17,31 @@ div
           :value='item.value'
         )
     el-button.ml-3(:icon='ElIconClose', circle, @click='filter.course = ""')
+  el-card.mt-5(header='Upload words from file')
+    .flex.flex-col
+      el-upload(
+        ref='upload',
+        v-model:file-list='fileUpload.file',
+        :auto-upload='false',
+        :show-file-list='false',
+        :limit='1',
+        :on-exceed='onExceed'
+      )
+        template(#trigger)
+          el-button.w-28(type='info') Select file
+      .flex.flex-col.gap-y-3.mt-3(v-if='fileUpload.string')
+        span SCHEMA [ original - local - english ]
+        el-input(
+          v-model='fileUpload.string',
+          type='textarea',
+          :autosize='{ maxRows: 25 }'
+        )
+        el-button.w-28(type='primary', @click='saveFromFile') Save
   h3.mt-5 Form
   el-card(v-if='word')
     el-form(ref='form', :model='word', :rules='rules', label-position='top')
-      el-button.w-40.mb-5(type='primary', @click='addNew') Reset form
+      el-row.gap-x-3
+        el-button.w-40.mb-5(type='danger', @click='addNew') Reset form
       el-row.gap-x-5
         el-form-item(label='Original', prop='original')
           el-input(v-model='word.original')
@@ -95,7 +116,12 @@ div
 </template>
 
 <script setup lang="ts">
-import type { FormRules } from 'element-plus'
+import {
+  type FormRules,
+  type UploadFile,
+  type UploadInstance,
+  type UploadRawFile,
+} from 'element-plus'
 
 definePageMeta({
   layout: 'admin',
@@ -134,15 +160,20 @@ const rules: FormRules = {
   ],
 }
 
-const { t } = useI18n({ useScope: 'local' })
+// const { t } = useI18n({ useScope: 'local' })
 const { api } = useFeathers()
 
-const form = ref<any>(null)
-const word = ref(api.service('words').new())
 const filter = reactive({
   search: '',
   course: '',
 })
+const fileUpload = reactive({
+  file: [] as UploadFile[],
+  string: '',
+})
+const upload = ref<UploadInstance>()
+const form = ref<any>(null)
+const word = ref(api.service('words').new())
 
 const query = computed(() => ({
   query: {
@@ -163,10 +194,10 @@ words$.isSsr && (await words$.request)
 
 const validate = async () => {
   try {
-    word.value.original = word.value.original.trim()
-    word.value.local = word.value.local.trim()
-    word.value.english = word.value.english.trim()
-    word.value.notes.annotation = word.value.notes.annotation.trim()
+    word.value.original = word.value.original!.trim()
+    word.value.local = word.value.local!.trim()
+    word.value.english = word.value.english!.trim()
+    word.value.notes!.annotation = word.value.notes!.annotation.trim()
     await form.value.validate()
     return true
   } catch (error) {
@@ -216,6 +247,66 @@ const save = async () => {
   ElMessage.success('Word saved')
   word.value.reset()
   addNew()
+}
+
+const toText = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsText(file)
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+  })
+
+watchEffect(async () => {
+  const file = fileUpload.file[0]?.raw
+  if (!file) return
+  fileUpload.string = await toText(file)
+})
+
+const onExceed = ([file]: UploadRawFile[]) => {
+  upload.value!.clearFiles()
+  upload.value!.handleStart(file)
+}
+
+const saveFromFile = async () => {
+  const lines = fileUpload.string.split('\n')
+  const words = lines.map((line) => {
+    const [original, local, english = 'NOT_SET'] = line.split(' - ')
+    return api.service('words').new({
+      original,
+      local,
+      english,
+      course: 'rus-fin',
+    })
+  })
+
+  const duplicate = await api.service('words').find({
+    query: {
+      original: { $in: words.map((word) => word.original as string) },
+      course: 'rus-fin',
+    },
+  })
+
+  if (duplicate.total) {
+    const duplicatedMessagePart = duplicate.data
+      .map((word) => `${word.original} - ${word.local}`)
+      .join(' /// ')
+    const result = await ElMessageBox.confirm(
+      `Found duplicates for some words from the list: ${duplicatedMessagePart}. Do you want to continue?`,
+      'Duplicate',
+      {
+        confirmButtonText: 'Still save',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      },
+    ).catch(() => false)
+    if (!result) return
+  }
+
+  await api.service('words').create(words as Word[])
+  ElMessage.success('Words saved')
+  fileUpload.string = ''
+  fileUpload.file = []
 }
 </script>
 

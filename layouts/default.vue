@@ -2,7 +2,7 @@
 .mx-auto.h-screen(class='max-w-[500px]')
   el-header(height='50')
     el-row.pt-6(justify='space-between', align='middle')
-      h1.text-3xl Syntax Sage
+      h1.text-3xl(@click='reload') Syntax Sage
       el-avatar(@click='navigateTo("/profile")')
         el-icon
           ElIconUser
@@ -12,6 +12,8 @@
     slot
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const reload = () => location.reload()
+</script>
 
 <style scoped lang="scss"></style>

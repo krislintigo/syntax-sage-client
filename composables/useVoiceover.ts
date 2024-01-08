@@ -2,10 +2,7 @@ type LANGUAGES = 'fi-FI' | 'en-US'
 
 export const useVoiceover = () => {
   if (window?.speechSynthesis) {
-    // console.log('speech synthesis')
-    speechSynthesis.onvoiceschanged = () => {
-      console.log('voices changed')
-    }
+    speechSynthesis.onvoiceschanged = () => {}
   }
 
   const getVoices = ({ language }: { language?: LANGUAGES }) => {
