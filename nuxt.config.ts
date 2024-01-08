@@ -74,8 +74,14 @@ export default defineNuxtConfig({
     manifest: {
       name: 'Syntax Sage',
       short_name: 'Syntax Sage',
-      theme_color: '#0a0a0a',
+      theme_color: '#000',
       background_color: '#0a0a0a',
+      // icons: [],
+      description: 'Application for studying words by courses and categories.',
+      categories: ['education', 'productivity'],
+      orientation: 'portrait-primary',
+      display: 'minimal-ui', // ?
+      // screenshots: [],
     },
   },
 })
