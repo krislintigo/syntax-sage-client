@@ -62,11 +62,15 @@ export default defineNuxtPlugin((nuxt) => {
       words: {
         setupInstance(data) {
           const defaults = {
+            course: '',
             original: '',
             local: '',
             english: '',
-            notes: '',
-            course: '',
+
+            notes: {
+              annotation: '',
+              grammar: '',
+            },
             categories: [],
           }
           return useInstanceDefaults(defaults, data)

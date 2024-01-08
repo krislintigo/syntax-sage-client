@@ -180,6 +180,7 @@ const checkAnswer = async (_answer: string) => {
   }
   const termToUpdate = currentQuestion.value.originalTerm.clone()
   termToUpdate.studies[currentQuestion.value.studyType] += 1
+  termToUpdate.lastStudiedAt = new Date().toISOString()
   await termToUpdate.save()
   termToUpdate.reset()
   nextQuestion()

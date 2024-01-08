@@ -1,7 +1,7 @@
 <template lang="pug">
-.m-auto.h-screen(class='max-w-[500px]')
+.mx-auto.h-screen(class='max-w-[500px]')
   el-header(height='50')
-    el-row.mt-6(justify='space-between', align='middle')
+    el-row.pt-6(justify='space-between', align='middle')
       h1.text-3xl Syntax Sage
       el-avatar(@click='navigateTo("/profile")')
         el-icon

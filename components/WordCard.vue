@@ -17,7 +17,7 @@ el-card(shadow='never', class='!border-0')
           component(:is='favorite ? ElIconStarFilled : ElIconStar')
   p.text-base {{ word.local }}
   el-row.mt-2(justify='space-between')
-    p.italic.text-sm.text-gray-400 {{ word.notes }}
+    p.italic.text-sm.text-gray-400 {{ word.notes.annotation }}
     p.italic.text-sm.text-gray-400 {{ word.english }}
 </template>
 

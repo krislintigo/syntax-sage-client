@@ -5,7 +5,7 @@ termStatistics:
   labels:
     notStudied: Не изучено
     stillLearning: В процессе изучения
-    mastered: Изучено
+    mastered: Усвоено
 categories:
   labels:
     businessMoney: Бизнес / Деньги

@@ -1,16 +1,20 @@
 <template lang="pug">
 div
   client-only
-    el-dialog(
-      v-model='detailDialog.visible',
-      width='90%',
-      :title='detailDialog.term?.word.original',
-      align-center
-    )
+    el-dialog(v-model='detailDialog.visible', width='90%', align-center)
+      template(#header)
+        h3.text-3xl {{ detailDialog.term?.word.original }}
       .flex.flex-col.gap-y-1
-        h3 {{ t('details.matches') }}: {{ detailDialog.term?.studies.match }}
-        h3 {{ t('details.writing') }}: {{ detailDialog.term?.studies.writing }}
-        h3 {{ t('details.audio') }}: {{ detailDialog.term?.studies.audio }}
+        h3.mt-3.text-lg {{ t('details.learningProgress') }}:
+        .flex.flex-col.gap-y-1.ml-3
+          h3.text-base {{ t('details.matches') }}: {{ detailDialog.term?.studies.match }}
+          h3.text-base {{ t('details.writing') }}: {{ detailDialog.term?.studies.writing }}
+          h3.text-base {{ t('details.audio') }}: {{ detailDialog.term?.studies.audio }}
+        h3.mt-3.text-lg {{ t('details.grammarNotes') }}:
+        TextEditor(
+          :model-value='detailDialog.term?.word.notes.grammar',
+          target='grammar-notes'
+        )
   .mb-5
     el-input.mb-3(
       v-model='filter.search',
@@ -347,9 +351,11 @@ en:
     cancel: Cancel
     study: Study
   details:
+    learningProgress: Learning progress
     matches: Matches
     audio: Audio
     writing: Writing
+    grammarNotes: Grammar notes
 ru:
   filters:
     search: Поиск в словаре...
@@ -369,9 +375,11 @@ ru:
     cancel: Отмена
     study: Добавить
   details:
+    learningProgress: Прогресс изучения
     matches: Соответствие
     audio: Аудирование
     writing: Написание
+    grammarNotes: Грамматические заметки
 fi:
   filters:
     search: Etsi sanakirjasta...
@@ -391,7 +399,9 @@ fi:
     cancel: Peruuta
     study: Add
   details:
+    learningProgress: Oppimisen edistyminen
     matches: Osumat
     audio: Ääni
     writing: Kirjoitus
+    grammarNotes: Kielioppihuomautukset
 </i18n>
