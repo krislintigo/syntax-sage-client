@@ -49,7 +49,11 @@ div
                 :value='item.value'
               )
         el-form-item(label='Grammar notes', prop='notes.grammar')
-          TextEditor(v-model='word.notes.grammar', editable)
+          TextEditor(
+            v-model='word.notes.grammar',
+            editable,
+            target='grammar-notes'
+          )
       el-button.w-40(type='primary', @click='save') {{ word._id ? 'Save' : 'Add' }}
   el-table(v-loading='words$.isPending', :data='words$.data')
     el-table-column(prop='original', label='Original')

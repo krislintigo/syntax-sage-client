@@ -52,7 +52,7 @@
       el-button.grow(@click='editor.chain().focus().setHorizontalRule().run()')
         el-icon
           ElIconSemiSelect
-  EditorContent(:editor='editor', :class='target')
+  EditorContent(:editor='editor', :class='{ [target]: true, editable }')
 </template>
 
 <script setup lang="ts">
@@ -93,51 +93,68 @@ onMounted(() => {
   border-left: 1px solid dimgray;
 }
 
-.ProseMirror p {
+.grammar-notes.editable .ProseMirror {
+  padding: 5px 10px;
+  outline: 1px solid #dcdfe6;
+  border-radius: 3px;
+  border: 0;
+  transition: outline-color 0.2s ease-in-out;
+}
+
+.grammar-notes.editable .ProseMirror:hover {
+  outline-color: darkgrey;
+}
+
+.grammar-notes.editable .ProseMirror-focused,
+.grammar-notes.editable .ProseMirror:hover.ProseMirror-focused {
+  outline-color: #409eff;
+}
+
+.grammar-notes .ProseMirror p {
   margin: 5px 0;
 }
 
-.ProseMirror h1,
-.ProseMirror h2,
-.ProseMirror h3 {
+.grammar-notes .ProseMirror h1,
+.grammar-notes .ProseMirror h2,
+.grammar-notes .ProseMirror h3 {
   line-height: 1;
   margin: 16px 0;
   font-weight: 400;
 }
 
-.ProseMirror h1 {
+.grammar-notes .ProseMirror h1 {
   font-size: 30px;
 }
 
-.ProseMirror h2 {
+.grammar-notes .ProseMirror h2 {
   font-size: 24px;
 }
 
-.ProseMirror h3 {
+.grammar-notes .ProseMirror h3 {
   font-size: 18px;
 }
 
-.ProseMirror ul,
-.ProseMirror ol {
+.grammar-notes .ProseMirror ul,
+.grammar-notes .ProseMirror ol {
   margin: 10px 0;
   padding-left: 18px;
 }
 
-.ProseMirror ul {
+.grammar-notes .ProseMirror ul {
   list-style-type: disc;
 }
 
-.ProseMirror ol {
+.grammar-notes .ProseMirror ol {
   list-style-type: decimal;
 }
 
-.ProseMirror blockquote {
+.grammar-notes .ProseMirror blockquote {
   margin-left: 20px;
   padding-left: 10px;
   border-left: 3px solid dimgray;
 }
 
-.ProseMirror hr {
+.grammar-notes .ProseMirror hr {
   border: 0;
   border-top: 1px solid gray;
   margin: 10px 15px;
