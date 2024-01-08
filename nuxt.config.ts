@@ -82,7 +82,20 @@ export default defineNuxtConfig({
       orientation: 'portrait-primary',
       display_override: ['minimal-ui', 'window-controls-overlay'],
       display: 'minimal-ui', // ?
-      // screenshots: [],
+      screenshots: [
+        {
+          src: '/screenshots/screenshot-1.png',
+          type: 'image/png',
+          sizes: '1180x2560',
+          form_factor: 'narrow',
+        },
+        {
+          src: '/screenshots/screenshot-2.png',
+          type: 'image/png',
+          sizes: '2350x1890',
+          form_factor: 'wide',
+        },
+      ],
     },
   },
 })
