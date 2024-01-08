@@ -52,7 +52,8 @@
       el-button.grow(@click='editor.chain().focus().setHorizontalRule().run()')
         el-icon
           ElIconSemiSelect
-  EditorContent(:editor='editor', :class='{ [target]: true, editable }')
+  client-only
+    EditorContent(:editor='editor', :class='{ [target]: true, editable }')
 </template>
 
 <script setup lang="ts">
