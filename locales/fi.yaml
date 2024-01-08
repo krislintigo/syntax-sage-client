@@ -1,25 +1,25 @@
 courses:
   labels:
-    rusFin: 0
+    rusFin: Venäjä - Suomi
 termStatistics:
   labels:
-    notStudied: 0
-    stillLearning: 0
-    mastered: 0
+    notStudied: Opeteltavat
+    stillLearning: Keskeneräiset
+    mastered: Opetellut
 categories:
   labels:
-    businessMoney: 0
-    food: 0
-    healthFitness: 0
-    hobbiesInterests: 0
+    businessMoney: Liiketoiminta / Raha
+    food: Ruoka!!!:)
+    healthFitness: Terveys / Kuntoilu
+    hobbiesInterests: Harrastukset
     home: Koti
-    familyRelationship: 0
-    geography: 0
-    natureEnvironment: 0
-    peopleSociety: 0
-    politicsLaw: 0
-    scienceTechnology: 0
-    sportsGames: 0
-    travel: 0
-    transportation: 0
+    familyRelationship: Perhe / Suhteet
+    geography: Maantiede
+    natureEnvironment: Luonto / Ympäristö
+    peopleSociety: Ihmiset / Yhteiskunta
+    politicsLaw: Politiikka / Oikeus
+    scienceTechnology: Tiede / Tekniikka
+    sportsGames: Urheilu / Pelit
+    travel: Matkailu
+    transportation: Liikenne
 

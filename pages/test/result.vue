@@ -48,9 +48,9 @@ ru:
     goHome: На главную
 fi:
   result:
-    title: Testi on valmis
-    correct: oikeita vastauksia
-    incorrect: vääriä vastauksia
-    result: Tulos
-    goHome: Takaisin kotiin
+    title: Testi on suoritettu
+    correct: Oikeat vastaukset
+    incorrect: Väärät vastaukset
+    result: Tuloksesi
+    goHome: Takaisin kotisivulle
 </i18n>

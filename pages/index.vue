@@ -382,26 +382,26 @@ ru:
     grammarNotes: Грамматические заметки
 fi:
   filters:
-    search: Etsi sanakirjasta...
-    categories: Kategoriat
+    search: Hae sanakirjasta...
+    categories: Luokat
   tabs:
     terms: Termit
     favourites: Suosikit
     unstudied: Opiskelemattomat
   settings:
-    title: Jatka oppimista!
-    addMoreToContinue: Lisää sanoja, jotta voit testata ja jatkaa oppimista!
-    numberOfQuestions: Kysymysten määrä
-    questionTypes: Kysymysten tyypit
+    title: Jatka opiskelua!
+    addMoreToContinue: Lisää sanoja suorittaaksesi testit ja jatkaksesi opiskelua!
+    numberOfQuestions: Kysymysmäärä
+    questionTypes: Kysymystyypit
     startTest: Aloita testi
   addNew:
-    select: Opiskele sanoja
+    select: Opettele sanoja
     cancel: Peruuta
-    study: Add
+    study: Lisää
   details:
     learningProgress: Oppimisen edistyminen
     matches: Osumat
-    audio: Ääni
+    audio: Kuuntelu
     writing: Kirjoitus
     grammarNotes: Kielioppihuomautukset
 </i18n>

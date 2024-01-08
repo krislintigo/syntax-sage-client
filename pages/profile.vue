@@ -7,7 +7,7 @@
         el-select.w-full(v-model='locale', size='large')
           el-option(label='English', value='en')
           el-option(label='Русский', value='ru')
-          //el-option(label='Suomi', value='fi')
+          el-option(label='Suomi', value='fi')
       div
         h4.text-lg.mb-1 {{ t('courseVoiceover') }}
         el-select.w-full(

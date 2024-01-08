@@ -222,9 +222,9 @@ ru:
     placeholder: Введите ответ здесь...
 fi:
   error:
-    title: Virhe
+    title: Väärin
     correct: Oikein
-    youSaid: Sanoit
+    youSaid: Vastasit
     next: Seuraava
   writing:
     placeholder: Kirjoita vastauksesi tähän...
