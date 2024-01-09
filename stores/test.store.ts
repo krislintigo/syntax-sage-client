@@ -121,7 +121,7 @@ export const useTestStore = defineStore('test', () => {
 
   const answer = (answer: string) => {
     const question = questions.value[progress.value.current]
-    const isCorrect = question.data.correct === answer
+    const isCorrect = question.data.correct === answer.trim().toLowerCase()
 
     question.status.answered = true
     question.status.correct = isCorrect

@@ -44,7 +44,7 @@
       .mb-16.outline.outline-1.rounded(:class='getWritingColorClass()')
         el-input.h-14(
           v-model='currentQuestion.status.answer',
-          :placeholder='t("writing.placeholder")',
+          :placeholder='writingPlaceholder',
           size='large',
           class='!text-lg',
           autocapitalize='off',
@@ -74,7 +74,7 @@
         .outline.outline-1.rounded.mb-1(:class='getAudioColorClass()')
           el-input.h-14(
             v-model='currentQuestion.status.answer',
-            :placeholder='t("audio.placeholder")',
+            :placeholder='audioPlaceholder',
             size='large',
             class='!text-lg',
             autocapitalize='off',
@@ -87,12 +87,6 @@
               )
                 el-icon
                   ElIconCheck
-        h4.text-sm.text-center.text-gray-600(
-          v-if='currentQuestion.questionType === "audio-original"'
-        ) Finnish
-        h4.text-sm.text-center.text-gray-600(
-          v-if='currentQuestion.questionType === "audio-local"'
-        ) Russian
 </template>
 
 <script setup lang="ts">
@@ -105,6 +99,7 @@ const voiceover = useCookie<Record<string, string>>('voiceover')
 const { t } = useI18n({ useScope: 'local' })
 const { play } = useVoiceover()
 const testStore = useTestStore()
+
 if (!testStore.questions.length) {
   navigateTo('/', { replace: true })
 }
@@ -154,6 +149,27 @@ const getAudioColorClass = () => {
   }
   return 'outline-red-500'
 }
+
+const writingPlaceholder = computed(() => {
+  if (!currentQuestion.value) return ''
+
+  return t(`writing.placeholder.fi`)
+})
+
+const audioPlaceholder = computed(() => {
+  if (!currentQuestion.value) return ''
+
+  let language = ''
+
+  if (currentQuestion.value.questionType === 'audio-original') {
+    language = 'fi'
+  }
+  if (currentQuestion.value.questionType === 'audio-local') {
+    language = 'ru'
+  }
+
+  return t(`audio.placeholder.${language}`)
+})
 
 const playQuestion = () => {
   play(currentQuestion.value.data.question, {
@@ -213,9 +229,15 @@ en:
     youSaid: You said
     next: Next
   writing:
-    placeholder: Type your answer here...
+    placeholder:
+      en: Type in English
+      ru: Type in Russian
+      fi: Type in Finnish
   audio:
-    placeholder: Type your answer here...
+    placeholder:
+      en: Type in English
+      ru: Type in Russian
+      fi: Type in Finnish
 ru:
   error:
     title: Ошибка
@@ -223,9 +245,15 @@ ru:
     youSaid: Вы сказали
     next: Далее
   writing:
-    placeholder: Введите ответ здесь...
+    placeholder:
+      en: Напишите на английском
+      ru: Напишите на русском
+      fi: Напишите на финском
   audio:
-    placeholder: Введите ответ здесь...
+    placeholder:
+      en: Напишите на английском
+      ru: Напишите на русском
+      fi: Напишите на финском
 fi:
   error:
     title: Väärin
@@ -233,7 +261,13 @@ fi:
     youSaid: Vastasit
     next: Seuraava
   writing:
-    placeholder: Kirjoita vastauksesi tähän...
+    placeholder:
+      en: Kirjoita englanniksi
+      ru: Kirjoita venäjäksi
+      fi: Kirjoita suomeksi
   audio:
-    placeholder: Kirjoita vastauksesi tähän...
+    placeholder:
+      en: Kirjoita englanniksi
+      ru: Kirjoita venäjäksi
+      fi: Kirjoita suomeksi
 </i18n>
