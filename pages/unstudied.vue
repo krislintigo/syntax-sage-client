@@ -6,10 +6,10 @@ div
         v-if='!toStudy.isSelect',
         size='large',
         @click='toStudy.isSelect = true'
-      ) {{ t('addNew.select') }}
+      ) {{ t('study.select') }}
       el-row(v-else)
-        el-button.grow(size='large', @click='cancelStudy') {{ t('addNew.cancel') }}
-        el-button.grow(size='large', @click='studyWords') {{ t('addNew.study') }}
+        el-button.grow(size='large', @click='cancelStudy') {{ t('study.cancel') }}
+        el-button.grow(size='large', @click='studyWords') {{ t('study.add') }}
       .mt-4
       el-row(v-for='word in unstudied$.data', :key='word._id', align='middle')
         el-checkbox(
@@ -90,18 +90,18 @@ const studyWords = async () => {
 
 <i18n lang="yaml">
 en:
-  addNew:
+  study:
     select: Study words
     cancel: Cancel
-    study: Study
+    add: Study
 ru:
-  addNew:
+  study:
     select: Изучать слова
     cancel: Отмена
-    study: Добавить
+    add: Добавить
 fi:
-  addNew:
+  study:
     select: Opettele sanoja
     cancel: Peruuta
-    study: Lisää
+    add: Lisää
 </i18n>

@@ -44,21 +44,21 @@
           :value='terms$.total',
           @click='navigate("/")'
         )
-        .bg-blue-500.h-px.mt-1(v-if='route.path === "/"')
+        .h-1.bg-blue-500.mt-1.rounded(v-if='route.path === "/"')
       el-col(:span='6')
         el-statistic(
           :title='t("tabs.favourites")',
           :value='favorite$.total',
           @click='navigate("/favorites")'
         )
-        .bg-blue-500.h-px.mt-1(v-if='route.path === "/favorites"')
+        .h-1.bg-blue-500.mt-1.rounded(v-if='route.path === "/favorites"')
       el-col(:span='6')
         el-statistic(
           :title='t("tabs.unstudied")',
           :value='unstudied$.total',
           @click='navigate("/unstudied")'
         )
-        .bg-blue-500.h-px.mt-1(v-if='route.path === "/unstudied"')
+        .h-1.bg-blue-500.mt-1.rounded(v-if='route.path === "/unstudied"')
     slot
 </template>
 

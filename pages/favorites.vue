@@ -3,12 +3,12 @@ div
   client-only
     el-dialog(v-model='detailDialog.visible', width='90%', align-center)
       template(#header)
-        h3.text-3xl {{ detailDialog.term?.word.original }}
+        h3.text-3xl {{ detailDialog.term.word.original }}
       TermDetails(:term='detailDialog.term')
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
       .border-2.rounded-xl.border-gray-600.p-4.mb-3
-        template(v-if='terms$.total >= 2 && favorite$.total >= 1')
+        template(v-if='favorite$.total >= 1')
           h3.text-xl.text-center.mb-5 {{ t('settings.title') }}
           el-row.gap-x-3(justify='space-between', align='middle')
             h4.w-20 {{ t('settings.numberOfQuestions') }}
@@ -28,7 +28,7 @@ div
               size='large',
               @click='startLearning'
             ) {{ t('settings.startTest') }}
-        template(v-else)
+        template(v-else-if='!favorite$.isPending')
           h3.text-xl.text-center.px-3 {{ t('settings.addMoreToContinue') }}
       WordCard(
         v-for='term in favorite$.data',
@@ -56,7 +56,6 @@ const detailDialog = reactive({
   visible: false,
   term: null as Term | null,
 })
-const progressStatistics = ref<any>(null)
 
 const learnSettings = reactive({
   questions: 10,
@@ -70,39 +69,6 @@ const learnSettings = reactive({
 })
 
 const wordJoin = computed(() => filter.search || filter.categories.length)
-
-const termsQuery = computed(() => ({
-  query: {
-    userId: authStore.user._id,
-    ...(wordJoin.value && {
-      word: {
-        ...(filter.search && {
-          $or: [
-            { original: { $regex: filter.search, $options: 'i' } },
-            { english: { $regex: filter.search, $options: 'i' } },
-            { local: { $regex: filter.search, $options: 'i' } },
-          ],
-        }),
-        ...(filter.categories.length && {
-          categories: {
-            $in: filter.categories,
-          },
-        }),
-      },
-    }),
-    $paginate: false,
-  },
-}))
-
-const terms$ = api
-  .service('terms')
-  .useFind(termsQuery, { paginateOn: 'server' })
-
-terms$.isSsr && (await terms$.request)
-
-watchEffect(() => {
-  progressStatistics.value = createProgressStatistics(terms$.data)
-})
 
 const favoriteQuery = computed(() => ({
   query: {
@@ -143,15 +109,18 @@ const changeFavorite = async ({ _id, favorite }: Term) => {
 }
 
 const openTermDetail = (term: Term) => {
-  detailDialog.visible = true
   detailDialog.term = term
+  detailDialog.visible = true
 }
 
 const startLearning = async () => {
+  const allTerms = await api
+    .service('terms')
+    .find({ query: { userId: authStore.user._id, $paginate: false } })
   testStore.start({
     numberOfQuestions: learnSettings.questions,
-    termsToTest: favorite$.data,
-    allTerms: terms$.data,
+    termsToTest: favorite$.data as Term[],
+    allTerms: allTerms.data as Term[],
     questionTypes: learnSettings.questionTypes,
   })
   await navigateTo('/test')

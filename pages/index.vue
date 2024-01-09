@@ -3,7 +3,7 @@ div
   client-only
     el-dialog(v-model='detailDialog.visible', width='90%', align-center)
       template(#header)
-        h3.text-3xl {{ detailDialog.term?.word.original }}
+        h3.text-3xl {{ detailDialog.term.word.original }}
       TermDetails(:term='detailDialog.term')
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
@@ -35,7 +35,6 @@ definePageMeta({
   permission: ['student'],
 })
 
-const { t } = useI18n()
 const { api } = useFeathers()
 const authStore = useAuthStore()
 
@@ -78,7 +77,7 @@ const terms$ = api
 terms$.isSsr && (await terms$.request)
 
 watchEffect(() => {
-  progressStatistics.value = createProgressStatistics(terms$.data)
+  progressStatistics.value = createProgressStatistics(terms$.data as Term[])
 })
 
 const changeFavorite = async ({ _id, favorite }: Term) => {
@@ -86,8 +85,8 @@ const changeFavorite = async ({ _id, favorite }: Term) => {
 }
 
 const openTermDetail = (term: Term) => {
-  detailDialog.visible = true
   detailDialog.term = term
+  detailDialog.visible = true
 }
 </script>
 
