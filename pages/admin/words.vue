@@ -160,7 +160,6 @@ const rules: FormRules = {
   ],
 }
 
-// const { t } = useI18n({ useScope: 'local' })
 const { api } = useFeathers()
 
 const filter = reactive({
@@ -269,9 +268,10 @@ const onExceed = ([file]: UploadRawFile[]) => {
 }
 
 const saveFromFile = async () => {
-  const lines = fileUpload.string.split('\n')
+  const lines = fileUpload.string.trim().split('\n')
+  console.log(lines)
   const words = lines.map((line) => {
-    const [original, local, english = 'NOT_SET'] = line.split(' - ')
+    const [original, local, english = 'NOT_SET'] = line.trim().split(' - ')
     return api.service('words').new({
       original,
       local,

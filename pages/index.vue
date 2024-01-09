@@ -178,9 +178,9 @@ const progressStatistics = ref(null)
 const learnSettings = reactive({
   questions: 10,
   questionTypes: [
-    // 'original-local',
-    // 'local-original',
-    // 'writing',
+    'original-local',
+    'local-original',
+    'writing',
     'audio-original',
     'audio-local',
   ] as QuestionType[],

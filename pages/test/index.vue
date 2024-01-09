@@ -26,7 +26,9 @@
     template(
       v-if='["original-local", "local-original"].includes(currentQuestion.questionType)'
     )
-      h3.mt-16.text-4xl {{ currentQuestion.data.question }}
+      div
+        h3.mt-16.text-4xl {{ currentQuestion.data.question }}
+        p.mt-3.text-base.text-gray-500 {{ currentQuestion.originalTerm.word.notes.annotation }}
       .flex.flex-col.gap-y-3.mx-3
         .p-4.border-2.rounded-lg(
           v-for='option in currentQuestion.data.options',
@@ -36,7 +38,9 @@
         )
           h4.text-base {{ option.value }}
     template(v-if='currentQuestion.questionType === "writing"')
-      h3.mt-16.text-4xl {{ currentQuestion.data.question }}
+      div
+        h3.mt-16.text-4xl {{ currentQuestion.data.question }}
+        h4.text-base.text-gray-500 {{ currentQuestion.originalTerm.word.notes.annotation }}
       .mb-16.outline.outline-1.rounded(:class='getWritingColorClass()')
         el-input.h-14(
           v-model='currentQuestion.status.answer',
