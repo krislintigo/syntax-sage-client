@@ -1,7 +1,7 @@
 <template lang="pug">
 .mx-auto
   el-header
-    el-row.px-16(justify='space-between', align='middle')
+    el-row(justify='space-between', align='middle', class='px-[5%]')
       h1.mt-6.text-3xl Syntax Sage. Admin
   el-row(justify='center')
     el-divider(class='!w-11/12 !mb-3')

@@ -3,9 +3,15 @@
   .h-full.flex.flex-col.justify-between
     .flex.flex-col.gap-y-3
       h2.text-xl.text-center {{ t('result.title') }}
-      h3.text-green-500 {{ correct }} {{ t('result.correct') }}
-      h3.text-red-500 {{ incorrect }} {{ t('result.incorrect') }}
-      h3.text-blue-500 {{ t('result.result') }}: {{ Math.round((correct / (correct + incorrect)) * 100) }} %
+      h3.text-green-500.text-base
+        span {{ t('result.correct') }}:
+        span.ml-1.text-2xl {{ correct }}
+      h3.text-red-500.text-base
+        span {{ t('result.incorrect') }}:
+        span.ml-1.text-2xl {{ incorrect }}
+      h3.text-blue-500.text-base
+        span {{ t('result.result') }}:
+        span.ml-1.text-2xl {{ Math.round((correct / (correct + incorrect)) * 100) }} %
     el-button.mb-8(type='primary', size='large', @click='goHome') {{ t('result.goHome') }}
 </template>
 
@@ -35,15 +41,15 @@ const goHome = async () => {
 en:
   result:
     title: Test is completed
-    correct: correct answers
-    incorrect: incorrect answers
+    correct: Correct answers
+    incorrect: Incorrect answers
     result: Result
     goHome: Back home
 ru:
   result:
     title: Тест завершен
-    correct: правильных ответов
-    incorrect: неправильных ответов
+    correct: Правильных ответов
+    incorrect: Неправильных ответов
     result: Результат
     goHome: На главную
 fi:
