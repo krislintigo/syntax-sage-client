@@ -116,11 +116,11 @@ div
 </template>
 
 <script setup lang="ts">
-import {
-  type FormRules,
-  type UploadFile,
-  type UploadInstance,
-  type UploadRawFile,
+import type {
+  FormRules,
+  UploadFile,
+  UploadInstance,
+  UploadRawFile,
 } from 'element-plus'
 
 definePageMeta({
@@ -274,13 +274,12 @@ const onExceed = ([file]: UploadRawFile[]) => {
 
 const saveFromFile = async () => {
   const lines = fileUpload.string.trim().split('\n')
-  console.log(lines)
   const words = lines.map((line) => {
     const [original, local, english = 'NOT_SET'] = line.trim().split(' - ')
     return api.service('words').new({
-      original,
-      local,
-      english,
+      original: original?.trim(),
+      local: local?.trim(),
+      english: english?.trim(),
       course: 'rus-fin',
     })
   })

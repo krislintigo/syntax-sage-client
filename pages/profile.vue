@@ -21,6 +21,7 @@
             :label='voice.name',
             :value='voice.name'
           )
+        p.mt-2.mx-3.text-sm.text-gray-400 {{ t('voiceoverNote') }}
   el-row.mt-8(justify='center')
     el-button(type='primary', @click='navigateTo("/", { replace: true })') {{ t('toHomepage') }}
 </template>
@@ -62,13 +63,16 @@ watchEffect(() => setLocale(locale.value))
 en:
   appLanguage: App language
   courseVoiceover: Course voiceover
+  voiceoverNote: "Note: if you don't see the list of voiceovers, go to your device settings and install the language pack for the corresponding language."
   toHomepage: To homepage
 ru:
   appLanguage: Язык приложения
   courseVoiceover: Голосовое сопровождение курса
+  voiceoverNote: 'Замечание: если вы не видите список озвучек, зайдите в настройки своего устройства и установите языковой пакет для соответствующего языка.'
   toHomepage: На главную
 fi:
   appLanguage: Sovelluksen kieli
   courseVoiceover: Kurssin ääniraita
+  voiceoverNote: 'Huomautus: jos et näe ääniraitojen luetteloa, mene laitteesi asetuksiin ja asenna vastaavan kielen paketti.'
   toHomepage: Etusivulle
 </i18n>

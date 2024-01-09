@@ -22,7 +22,7 @@ definePageMeta({
   permission: 'public',
 })
 
-const { t: t_g } = useI18n({ useScope: 'global' })
+const { t: tG } = useI18n({ useScope: 'global' })
 const { t } = useI18n({ useScope: 'local' })
 
 const rules: FormRules = {
@@ -65,7 +65,7 @@ const validate = async () => {
 const register = async () => {
   try {
     const valid = await validate()
-    if (!valid) return ElMessage.warning(t_g('error.form.invalid'))
+    if (!valid) return ElMessage.warning(tG('error.form.invalid'))
     const student = api
       .service('users')
       .new({ ...authData, roles: ['student'] })
@@ -79,7 +79,7 @@ const register = async () => {
 const login = async () => {
   try {
     const valid = await validate()
-    if (!valid) return ElMessage.warning(t_g('error.form.invalid'))
+    if (!valid) return ElMessage.warning(tG('error.form.invalid'))
     await authStore.authenticate({ strategy: 'local', ...authData })
     await navigateTo('/')
   } catch (e: any) {
