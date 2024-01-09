@@ -173,6 +173,7 @@ const fileUpload = reactive({
 const upload = ref<UploadInstance>()
 const form = ref<any>(null)
 const word = ref(api.service('words').new())
+const previousOriginal = ref('')
 
 const query = computed(() => ({
   query: {
@@ -205,11 +206,13 @@ const validate = async () => {
 }
 
 const addNew = () => {
+  word.value.reset()
   word.value = api.service('words').new()
 }
 
 const edit = ({ _id }: any) => {
   word.value = api.service('words').getFromStore(_id, { clones: true }).value
+  previousOriginal.value = word.value.original as string
 }
 
 const remove = async ({ _id }: any) => {
@@ -222,24 +225,26 @@ const save = async () => {
   const valid = await validate()
   if (!valid) return ElMessage.warning('Form is not valid')
 
-  const duplicate = await api.service('words').find({
-    query: {
-      original: word.value.original,
-      course: word.value.course,
-      $limit: 1,
-    },
-  })
-  if (duplicate.total) {
-    const result = await ElMessageBox.confirm(
-      `Found duplicate for ${duplicate.data[0].original} - ${duplicate.data[0].local}`,
-      'Duplicate',
-      {
-        confirmButtonText: 'Still save',
-        cancelButtonText: 'Cancel',
-        type: 'warning',
+  if (!word.value._id || previousOriginal.value !== word.value.original) {
+    const duplicate = await api.service('words').find({
+      query: {
+        original: word.value.original,
+        course: word.value.course,
+        $limit: 1,
       },
-    ).catch(() => false)
-    if (!result) return
+    })
+    if (duplicate.total) {
+      const result = await ElMessageBox.confirm(
+        `Found duplicate for ${duplicate.data[0].original} - ${duplicate.data[0].local}`,
+        'Duplicate',
+        {
+          confirmButtonText: 'Still save',
+          cancelButtonText: 'Cancel',
+          type: 'warning',
+        },
+      ).catch(() => false)
+      if (!result) return
+    }
   }
 
   await word.value.save()
