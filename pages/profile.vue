@@ -73,6 +73,6 @@ ru:
 fi:
   appLanguage: Sovelluksen kieli
   courseVoiceover: Kurssin ääniraita
-  voiceoverNote: 'Huomautus: jos et näe ääniraitojen luetteloa, mene laitteesi asetuksiin ja asenna vastaavan kielen paketti.'
+  voiceoverNote: 'Huomautus: jos ääniraitaluetteloa ei näy, asenna vastaava kielipaketti laitteesi asetuksissa.'
   toHomepage: Etusivulle
 </i18n>
