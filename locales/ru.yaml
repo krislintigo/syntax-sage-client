@@ -1,3 +1,6 @@
+error:
+  form:
+    invalid: Пожалуйста, заполните все поля правильно
 courses:
   labels:
     rusFin: Русский - Финский

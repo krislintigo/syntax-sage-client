@@ -1,3 +1,6 @@
+error:
+  form:
+    invalid: Please fill out all fields correctly
 courses:
   labels:
     rusFin: Russian - Finnish

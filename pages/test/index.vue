@@ -43,6 +43,7 @@
           :placeholder='t("writing.placeholder")',
           size='large',
           class='!text-lg',
+          autocapitalize='off',
           @keyup.enter='checkAnswer(currentQuestion.status.answer)'
         )
           template(#append)
@@ -72,6 +73,7 @@
             :placeholder='t("audio.placeholder")',
             size='large',
             class='!text-lg',
+            autocapitalize='off',
             @keyup.enter='checkAnswer(currentQuestion.status.answer)'
           )
             template(#append)
@@ -202,7 +204,7 @@ const nextQuestion = () => {
 <i18n lang="yaml">
 en:
   error:
-    title: Error
+    title: Mistake
     correct: Correct
     youSaid: You said
     next: Next

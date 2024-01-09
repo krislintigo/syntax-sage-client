@@ -1,6 +1,6 @@
 export const COURSES = [
   {
-    title: 'Russian - Finnish',
+    title: 'Русский - Suomi',
     value: 'rus-fin',
     voiceover: { lang: 'fi-FI' },
   },

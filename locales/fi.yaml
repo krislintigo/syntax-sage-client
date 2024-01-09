@@ -1,3 +1,6 @@
+error:
+  form:
+    invalid: Täytä kaikki kentät oikein
 courses:
   labels:
     rusFin: Venäjä - Suomi

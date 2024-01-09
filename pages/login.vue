@@ -2,16 +2,16 @@
 .flex.flex-col.gap-y-3
   el-form(ref='form', :model='authData', :rules='rules')
     el-form-item(prop='login')
-      el-input(v-model='authData.login', placeholder='Login')
+      el-input(v-model='authData.login', :placeholder='t("form.fields.login")')
     el-form-item(prop='password')
       el-input(
         v-model='authData.password',
         type='password',
-        placeholder='Password'
+        :placeholder='t("form.fields.password")'
       )
   el-row
-    el-button.grow(type='primary', @click='register') Register
-    el-button.grow(type='primary', @click='login') Login
+    el-button.grow(type='primary', @click='register') {{ t('form.actions.register') }}
+    el-button.grow(type='primary', @click='login') {{ t('form.actions.login') }}
 </template>
 
 <script setup lang="ts">
@@ -22,18 +22,21 @@ definePageMeta({
   permission: 'public',
 })
 
+const { t: t_g } = useI18n({ useScope: 'global' })
+const { t } = useI18n({ useScope: 'local' })
+
 const rules: FormRules = {
   login: [
     {
       required: true,
-      message: 'Enter login',
+      message: t('form.error.login.required'),
       trigger: 'change',
     },
   ],
   password: [
     {
       required: true,
-      message: 'Enter password',
+      message: t('form.error.password.required'),
       trigger: 'change',
     },
   ],
@@ -62,7 +65,7 @@ const validate = async () => {
 const register = async () => {
   try {
     const valid = await validate()
-    if (!valid) return ElMessage.warning('Form is not valid')
+    if (!valid) return ElMessage.warning(t_g('error.form.invalid'))
     const student = api
       .service('users')
       .new({ ...authData, roles: ['student'] })
@@ -76,7 +79,7 @@ const register = async () => {
 const login = async () => {
   try {
     const valid = await validate()
-    if (!valid) return ElMessage.warning('Please fill out all fields correctly')
+    if (!valid) return ElMessage.warning(t_g('error.form.invalid'))
     await authStore.authenticate({ strategy: 'local', ...authData })
     await navigateTo('/')
   } catch (e: any) {
@@ -86,3 +89,45 @@ const login = async () => {
 </script>
 
 <style scoped lang="scss"></style>
+
+<i18n lang="yaml">
+en:
+  form:
+    fields:
+      login: Login
+      password: Password
+    error:
+      login:
+        required: Enter login
+      password:
+        required: Enter password
+    actions:
+      register: Register
+      login: Login
+ru:
+  form:
+    fields:
+      login: Логин
+      password: Пароль
+    error:
+      login:
+        required: Введите логин
+      password:
+        required: Введите пароль
+    actions:
+      register: Регистрация
+      login: Войти
+fi:
+  form:
+    fields:
+      login: Kirjautuminen
+      password: Salasana
+    error:
+      login:
+        required: Anna kirjautuminen
+      password:
+        required: Anna salasana
+    actions:
+      register: Rekisteröinti
+      login: Kirjaudu
+</i18n>
