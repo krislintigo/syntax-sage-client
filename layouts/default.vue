@@ -3,9 +3,6 @@
   el-header(height='50')
     el-row.pt-6(justify='space-between', align='middle')
       h1.text-3xl(@click='reload') Syntax Sage
-      el-avatar(@click='navigateTo("/profile")')
-        el-icon
-          ElIconUser
   el-row(justify='center')
     el-divider(class='!w-11/12 !mb-3')
   el-main(class='h-[88%]')
