@@ -50,5 +50,9 @@ export const CATEGORIES = [
     title: (t: any) => t('categories.labels.computerInternet'),
     value: 'computer-internet',
   },
+  {
+    title: (t: any) => t('categories.labels.colorsForms'),
+    value: 'colors-forms',
+  },
   { title: (t: any) => t('categories.labels.dateTime'), value: 'date-time' },
 ]
