@@ -80,8 +80,8 @@ export default defineNuxtConfig({
       description: 'Application for studying words by courses and categories.',
       categories: ['education', 'productivity'],
       orientation: 'portrait-primary',
-      display_override: ['minimal-ui', 'window-controls-overlay'],
-      display: 'minimal-ui', // ?
+      // display_override: ['minimal-ui', 'window-controls-overlay'],
+      // display: 'minimal-ui', // ?
       screenshots: [
         {
           src: '/screenshots/screenshot-1.png',
