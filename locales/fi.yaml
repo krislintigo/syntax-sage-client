@@ -11,18 +11,25 @@ termStatistics:
     mastered: Opetellut
 categories:
   labels:
+    verbs: Verbit
+    adjectives: Adjektiivit
+    adverbs: Adverbit
     businessMoney: Liiketoiminta / Raha
-    food: Ruoka!!!:)
+    food: Ruoka
     healthFitness: Terveys / Kuntoilu
-    hobbiesInterests: Harrastukset
+    hobbiesSports: Harrastukset / Urheilu
     home: Koti
+    city: Kaupunki
+    education: Koulutus
+    clothes: Vaatteet
     familyRelationship: Perhe / Suhteet
     geography: Maantiede
     natureEnvironment: Luonto / Ympäristö
     peopleSociety: Ihmiset / Yhteiskunta
     politicsLaw: Politiikka / Oikeus
     scienceTechnology: Tiede / Tekniikka
-    sportsGames: Urheilu / Pelit
     travel: Matkailu
     transportation: Liikenne
+    computerInternet: Tietokone / Internet
+    dateTime: Päivämäärä / Aika
 

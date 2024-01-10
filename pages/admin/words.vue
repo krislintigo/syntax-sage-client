@@ -81,8 +81,10 @@ div
     el-table-column(prop='local', label='Local')
     el-table-column(prop='english', label='English')
     el-table-column(prop='notes.annotation', label='Notes')
-    el-table-column(prop='course', label='Course')
-    el-table-column
+    el-table-column(prop='categories', label='Categories')
+      template(#default='{ row: word }')
+        span {{ word.categories.map((category) => CATEGORIES.find((c) => c.value === category).title($t)).join(', ') }}
+    el-table-column(width='100')
       template(#default='{ row: item }')
         el-button(
           type='primary',

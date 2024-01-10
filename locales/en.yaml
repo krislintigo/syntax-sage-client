@@ -11,18 +11,25 @@ termStatistics:
     mastered: Mastered
 categories:
   labels:
+    verbs: Verbs
+    adjectives: Adjectives
+    adverbs: Adverbs
     businessMoney: Business / Money
     food: Food
     healthFitness: Health / Fitness
-    hobbiesInterests: Hobbies / Interests
+    hobbiesSports: Hobbies / Sports
     home: Home
+    city: City
+    education: Education
+    clothes: Clothes
     familyRelationship: Family / Relationship
     geography: Geography
     natureEnvironment: Nature / Environment
     peopleSociety: People / Society
     politicsLaw: Politics / Law
     scienceTechnology: Science / Technology
-    sportsGames: Sports / Games
     travel: Travel
     transportation: Transportation
+    computerInternet: Computer / Internet
+    dateTime: Date / Time
 

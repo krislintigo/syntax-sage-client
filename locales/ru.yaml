@@ -11,17 +11,24 @@ termStatistics:
     mastered: Усвоено
 categories:
   labels:
+    verbs: Глаголы
+    adjectives: Прилагательные
+    adverbs: Наречия
     businessMoney: Бизнес / Деньги
     food: Еда
     healthFitness: Здоровье / Фитнес
-    hobbiesInterests: Хобби / Интересы
+    hobbiesSports: Хобби / Спорт
     home: Дом
+    city: Город
+    education: Образование
+    clothes: Одежда
     familyRelationship: Семья / Отношения
     geography: География
     natureEnvironment: Природа / Окружающая среда
     peopleSociety: Люди / Общество
     politicsLaw: Политика / Закон
     scienceTechnology: Наука / Технологии
-    sportsGames: Спорт / Игры
     travel: Путешествия
     transportation: Транспорт
+    computerInternet: Компьютер / Интернет
+    dateTime: Дата / Время
