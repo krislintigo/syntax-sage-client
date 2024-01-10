@@ -14,7 +14,8 @@ div
           :title='stat.title',
           :count='stat.count',
           :percentage='stat.percentage',
-          :color='stat.color'
+          :color='stat.color',
+          @click='cardClick(key)'
         )
       el-divider
       WordCard(
@@ -50,6 +51,7 @@ const wordJoin = computed(() => filter.search || filter.categories.length)
 const termsQuery = computed(() => ({
   query: {
     userId: authStore.user._id,
+    studied: true,
     ...(wordJoin.value && {
       word: {
         ...(filter.search && {
@@ -79,6 +81,20 @@ terms$.isSsr && (await terms$.request)
 watchEffect(() => {
   progressStatistics.value = createProgressStatistics(terms$.data as Term[])
 })
+
+const cardClick = (key: string) => {
+  switch (key) {
+    case 'notStudied':
+      navigateTo('/learn')
+      break
+    case 'learning':
+      ElMessage.warning('Feature not implemented yet')
+      break
+    case 'mastered':
+      ElMessage.warning('Feature not implemented yet')
+      break
+  }
+}
 
 const changeFavorite = async ({ _id, favorite }: Term) => {
   await api.service('terms').patch(_id as string, { favorite: !favorite })

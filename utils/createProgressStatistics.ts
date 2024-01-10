@@ -1,4 +1,4 @@
-const getTermStatus = (term: Term): keyof typeof termStatistics => {
+export const getTermStatus = (term: Term): keyof typeof termStatistics => {
   const entries = Object.entries(term.studies)
   const notStudiedFlag = entries.every(([, value]) => value === 0)
   if (notStudiedFlag) return 'notStudied'

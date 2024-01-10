@@ -80,6 +80,7 @@ export default defineNuxtPlugin((nuxt) => {
         setupInstance(data) {
           const defaults = {
             favorite: false,
+            studied: true,
             studies: {
               match: 0,
               audio: 0,

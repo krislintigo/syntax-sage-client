@@ -7,11 +7,13 @@ div
       TermDetails(:term='detailDialog.term')
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
-      .border-2.rounded-xl.border-gray-600.p-4.mb-3
+      .border-2.rounded-xl.border-gray-600.p-4.mb-3(
+        v-if='!favorite$.isPending'
+      )
         template(v-if='favorite$.total >= 1')
           h3.text-xl.text-center.mb-5 {{ t('settings.title') }}
           el-row.gap-x-3(justify='space-between', align='middle')
-            h4.w-20 {{ t('settings.numberOfQuestions') }}
+            h4.w-20.text-base {{ t('settings.numberOfQuestions') }}
             el-input-number(
               v-model='learnSettings.questions',
               :max='favorite$.total',
@@ -19,7 +21,17 @@ div
             )
           .my-5
           el-row.gap-x-3(justify='space-between', align='middle')
-            h4.w-20 {{ t('settings.questionTypes') }}
+            h4.w-20.text-base {{ t('settings.questionTypes') }}
+            //el-button-group
+            //  el-button(:type='types.includes("match") ? "success" : ""')
+            //    el-icon
+            //      ElIconConnection
+            //  el-button
+            //    el-icon
+            //      ElIconEditPen
+            //  el-button
+            //    el-icon
+            //      ElIconHeadset
             span Will be available soon...
           .mt-4
           el-row(justify='center')
@@ -28,7 +40,7 @@ div
               size='large',
               @click='startLearning'
             ) {{ t('settings.startTest') }}
-        template(v-else-if='!favorite$.isPending')
+        template(v-else)
           h3.text-xl.text-center.px-3 {{ t('settings.addMoreToContinue') }}
       WordCard(
         v-for='term in favorite$.data',
@@ -57,6 +69,11 @@ const detailDialog = reactive({
   term: null as Term | null,
 })
 
+// const types = ref<any[]>(['match'])
+// watchEffect(() => {
+//   console.log(types.value)
+// })
+
 const learnSettings = reactive({
   questions: 10,
   questionTypes: [
@@ -74,6 +91,7 @@ const favoriteQuery = computed(() => ({
   query: {
     userId: authStore.user._id,
     favorite: true,
+    studied: true,
     ...(wordJoin.value && {
       word: {
         ...(filter.search && {
