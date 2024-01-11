@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     'nuxt-feathers-pinia',
     'nuxt-lodash',
     '@nuxtjs/tailwindcss',
+    'nuxt-icon',
     '@nuxtjs/eslint-module',
     '@vite-pwa/nuxt',
   ],
@@ -25,6 +26,14 @@ export default defineNuxtConfig({
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/icon.svg' }],
+      meta: [
+        {
+          name: 'viewport',
+          content:
+            'width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no',
+          'data-meta-dynamic': 'true',
+        },
+      ],
       title: 'Syntax Sage',
       htmlAttrs: { class: 'dark' },
     },

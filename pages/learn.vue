@@ -1,6 +1,6 @@
 <template lang="pug">
 .h-full.flex.flex-col
-  h3(v-if='!notStudiedTerms.length') Nothing to repeat
+  h3(v-if='!terms$.data.length') Nothing to repeat
   el-carousel.rounded.grow(
     v-else,
     :autoplay='false',
@@ -9,7 +9,7 @@
     arrow='always',
     height='100%'
   )
-    el-carousel-item(v-for='(term, i) in notStudiedTerms', :key='term._id')
+    el-carousel-item(v-for='(term, i) in terms$.data', :key='term._id')
       .relative.flex.flex-col.justify-center.text-center.h-full(
         @click='flipped[i] = !flipped[i]'
       )
@@ -33,8 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import { getTermStatus } from '~/utils/createProgressStatistics'
-
 definePageMeta({
   layout: 'default',
   permission: ['student'],
@@ -49,7 +47,7 @@ const termsQuery = computed(() => ({
   query: {
     userId: authStore.user._id,
     studied: true,
-    // status: 'not-studied',
+    status: 'not-studied',
     $paginate: false,
   },
 }))
@@ -63,10 +61,6 @@ terms$.isSsr && (await terms$.request)
 watchEffect(() => {
   flipped.value = terms$.data.map(() => false)
 })
-
-const notStudiedTerms = computed(() =>
-  terms$.data.filter((term) => getTermStatus(term) === 'notStudied'),
-)
 
 const changeFavorite = async ({ _id, favorite }: Term) => {
   await api.service('terms').patch(_id as string, { favorite: !favorite })

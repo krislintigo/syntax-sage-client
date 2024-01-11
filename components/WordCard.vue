@@ -4,8 +4,7 @@ el-card(shadow='never', class='!border-0')
     h3.text-2xl {{ word.original }}
     div
       el-button(circle, text, @click.stop='playAudio')
-        el-icon(size='20')
-          ElIconMicrophone
+        Icon(name='ion:volume-medium-outline', size='25', color='#909399')
       el-button(
         v-if='!hideFavorite',
         circle,

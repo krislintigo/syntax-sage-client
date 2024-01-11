@@ -79,7 +79,33 @@ const terms$ = api
 terms$.isSsr && (await terms$.request)
 
 watchEffect(() => {
-  progressStatistics.value = createProgressStatistics(terms$.data as Term[])
+  const mapper = {
+    'not-studied': 'notStudied',
+    learning: 'learning',
+    mastered: 'mastered',
+  }
+
+  progressStatistics.value = _merge(_cloneDeep(termStatistics), {
+    notStudied: { count: 0, percentage: 0 },
+    learning: { count: 0, percentage: 0 },
+    mastered: { count: 0, percentage: 0 },
+  })
+
+  if (!terms$.data.length) return
+
+  for (const term of terms$.data) {
+    progressStatistics.value[mapper[term.status]].count++
+  }
+
+  progressStatistics.value.notStudied.percentage = Math.round(
+    (progressStatistics.value.notStudied.count / terms$.data.length) * 100,
+  )
+  progressStatistics.value.learning.percentage = Math.round(
+    (progressStatistics.value.learning.count / terms$.data.length) * 100,
+  )
+  progressStatistics.value.mastered.percentage = Math.round(
+    (progressStatistics.value.mastered.count / terms$.data.length) * 100,
+  )
 })
 
 const cardClick = (key: string) => {

@@ -8,7 +8,7 @@
           ElIconUser
   el-row(justify='center')
     el-divider(class='!w-11/12 !mb-3')
-  el-main(class='h-[88%]')
+  el-main#main(class='h-[88%]')
     .mb-5
       el-input.mb-3(
         v-model='filter.search',
@@ -59,6 +59,9 @@
           @click='navigate("/unstudied")'
         )
         .h-1.bg-blue-500.mt-1.rounded(v-if='route.path === "/unstudied"')
+    el-backtop(target='#main')
+      el-icon.mt-px
+        ElIconArrowUpBold
     slot
 </template>
 
