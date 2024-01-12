@@ -11,10 +11,10 @@ declare global {
   type Word = _Word
   type Term = _Term
 
-  type QuestionType = 'original-local' | 'local-original' | 'writing' | 'audio-local' | 'audio-original'
+  type QuestionType = ('match' | 'writing' | 'audio' | 'original' | 'local' | 'options' | 'input')[]
 
   type Question = {
-    questionType: QuestionType,
+    type: QuestionType,
     studyType: keyof Term['studies'],
     originalTerm: Term,
     data: {

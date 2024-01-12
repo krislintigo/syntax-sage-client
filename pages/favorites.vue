@@ -7,32 +7,29 @@ div
       TermDetails(:term='detailDialog.term')
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
-      .border-2.rounded-xl.border-gray-600.p-4.mb-3(
-        v-if='!favorite$.isPending'
-      )
+      .border-2.rounded-xl.border-gray-600.p-4.mb-3
         template(v-if='favorite$.total >= 1')
           h3.text-xl.text-center.mb-5 {{ t('settings.title') }}
           el-row.gap-x-3(justify='space-between', align='middle')
             h4.w-20.text-base {{ t('settings.numberOfQuestions') }}
             el-input-number(
               v-model='learnSettings.questions',
-              :max='favorite$.total',
+              :max='favorite$.total * learnSettings.questionTypes.length',
               :min='1'
             )
           .my-5
           el-row.gap-x-3(justify='space-between', align='middle')
             h4.w-20.text-base {{ t('settings.questionTypes') }}
-            //el-button-group
-            //  el-button(:type='types.includes("match") ? "success" : ""')
-            //    el-icon
-            //      ElIconConnection
-            //  el-button
-            //    el-icon
-            //      ElIconEditPen
-            //  el-button
-            //    el-icon
-            //      ElIconHeadset
-            span Will be available soon...
+            el-checkbox-group(v-model='learnSettings.questionTypes')
+              el-checkbox-button(label='match')
+                el-icon
+                  ElIconConnection
+              el-checkbox-button(label='writing')
+                el-icon
+                  ElIconEditPen
+              el-checkbox-button(label='audio')
+                el-icon
+                  ElIconHeadset
           .mt-4
           el-row(justify='center')
             el-button.w-full(
@@ -69,20 +66,9 @@ const detailDialog = reactive({
   term: null as Term | null,
 })
 
-// const types = ref<any[]>(['match'])
-// watchEffect(() => {
-//   console.log(types.value)
-// })
-
 const learnSettings = reactive({
   questions: 10,
-  questionTypes: [
-    'original-local',
-    'local-original',
-    'writing',
-    'audio-original',
-    'audio-local',
-  ] as QuestionType[],
+  questionTypes: ['match', 'writing', 'audio'] as (keyof Term['studies'])[],
 })
 
 const wordJoin = computed(() => filter.search || filter.categories.length)
@@ -118,10 +104,6 @@ const favorite$ = api
 
 favorite$.isSsr && (await favorite$.request)
 
-watchEffect(() => {
-  learnSettings.questions = Math.min(favorite$.total, 50)
-})
-
 const changeFavorite = async ({ _id, favorite }: Term) => {
   await api.service('terms').patch(_id as string, { favorite: !favorite })
 }
@@ -143,6 +125,14 @@ const startLearning = async () => {
   })
   await navigateTo('/test')
 }
+
+watchEffect(() => {
+  learnSettings.questions = Math.min(favorite$.total, 50)
+  if (!learnSettings.questionTypes.length) {
+    learnSettings.questionTypes = ['match']
+  }
+})
+watchEffect(() => {})
 </script>
 
 <style scoped lang="scss"></style>

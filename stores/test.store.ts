@@ -1,3 +1,23 @@
+const generateOptions = (
+  term: Term,
+  allTerms: Term[],
+  variant: 'original' | 'local',
+) => {
+  const _optionsTerms = _shuffle(allTerms).slice(
+    0,
+    Math.min(4, allTerms.length),
+  )
+
+  const correctTerm = _optionsTerms.find((t) => t._id === term._id)
+  const optionsTerms = correctTerm
+    ? _optionsTerms
+    : _shuffle([term, ..._optionsTerms.slice(0, _optionsTerms.length - 1)])
+
+  return optionsTerms.map((term) => ({
+    value: variant === 'original' ? term.word.local : term.word.original,
+  }))
+}
+
 export const useTestStore = defineStore('test', () => {
   const progress = ref({
     current: 0,
@@ -6,7 +26,7 @@ export const useTestStore = defineStore('test', () => {
   const questions = ref<Question[]>([])
 
   const start = ({
-    numberOfQuestions,
+    numberOfQuestions, // not more than 3 for each term
     questionTypes,
     termsToTest,
     allTerms,
@@ -14,109 +34,115 @@ export const useTestStore = defineStore('test', () => {
     numberOfQuestions: number
     termsToTest: Term[]
     allTerms: Term[]
-    questionTypes: QuestionType[]
+    questionTypes: (keyof Term['studies'])[]
   }) => {
-    if (!questionTypes.length) return // at least one
+    if (!questionTypes.length) return
 
     progress.value = {
       current: 0,
       total: numberOfQuestions,
     }
+    questions.value = []
 
-    const allTestShuffled = _shuffle(termsToTest).slice(0, numberOfQuestions)
+    const termsWithCoefficients = termsToTest
+      .map((term) => {
+        const total = Object.values(term.studies).reduce(
+          (acc, cur) => acc + cur,
+          0,
+        )
+        return { term, coefficient: total }
+      })
+      .sort((a, b) => a.coefficient - b.coefficient)
 
-    questions.value = allTestShuffled.map((term) => {
-      const questionType = questionTypes[_random(0, questionTypes.length - 1)]
+    const repeatTimes = Math.ceil(numberOfQuestions / termsToTest.length)
+    const ids = _times(repeatTimes, () => _range(termsToTest.length))
+      .flat(1)
+      .slice(0, numberOfQuestions)
 
-      switch (questionType) {
-        case 'original-local':
-        case 'local-original': {
-          const _optionsTerms = _shuffle(allTerms).slice(
-            0,
-            Math.min(4, allTerms.length),
-          )
+    const allTest = ids.map((id) => termsWithCoefficients[id].term)
 
-          const correctTerm = _optionsTerms.find((t) => t._id === term._id)
-          const optionsTerms = correctTerm
-            ? _optionsTerms
-            : _shuffle([
-                term,
-                ..._optionsTerms.slice(0, _optionsTerms.length - 1),
-              ])
+    for (const term of allTest) {
+      const sameTerms = questions.value.filter(
+        (q) => q.originalTerm._id === term._id,
+      )
+      const usedQuestionTypes = sameTerms.map((q) => q.studyType)
+      const questionTypesToUse = _difference(questionTypes, usedQuestionTypes)
+      if (!questionTypesToUse.length) throw new Error('Nothing to use')
+
+      const filteredStudies = _pick(term.studies, questionTypesToUse)
+      const [studyType] = _minBy(
+        _shuffle(Object.entries(filteredStudies)),
+        ([, value]) => value,
+      )!
+
+      const status = {
+        answered: false,
+        correct: null,
+        answer: '',
+      }
+      switch (studyType) {
+        case 'match': {
+          const variant = _sample(['original', 'local'] as const)
+          const select = 'options'
 
           const question =
-            questionType === 'original-local'
-              ? term.word.original
-              : term.word.local
+            variant === 'original' ? term.word.original : term.word.local
           const correct =
-            questionType === 'original-local'
-              ? term.word.local
-              : term.word.original
-          const options = optionsTerms.map((term) => ({
-            value:
-              questionType === 'original-local'
-                ? term.word.local
-                : term.word.original,
-          }))
+            variant === 'original' ? term.word.local : term.word.original
+          const options = generateOptions(term, allTerms, variant)
 
-          return {
-            questionType,
-            studyType: 'match',
+          questions.value.push({
+            type: [studyType, variant, select],
+            studyType,
             originalTerm: term,
             data: { question, correct, options },
-            status: {
-              answered: false,
-              correct: null,
-              answer: '',
-            },
-          }
+            status,
+          })
+          break
         }
-
         case 'writing': {
-          return {
-            questionType,
-            studyType: 'writing',
+          const variant = 'local'
+          const select = 'input'
+
+          questions.value.push({
+            type: [studyType, variant, select],
+            studyType,
             originalTerm: term,
             data: {
               question: term.word.local,
               correct: term.word.original,
               options: [],
             },
-            status: {
-              answered: false,
-              correct: null,
-              answer: '',
-            },
-          }
+            status,
+          })
+          break
         }
+        case 'audio': {
+          const variant = 'original'
+          const select = _sample(['options', 'input'] as const)
 
-        // options or/and writing?
-        case 'audio-original':
-        case 'audio-local': {
           const correct =
-            questionType === 'audio-original'
-              ? term.word.original
-              : term.word.local
-          return {
-            questionType,
-            studyType: 'audio',
+            select === 'options' ? term.word.local : term.word.original
+          const options =
+            select === 'options' ? generateOptions(term, allTerms, variant) : []
+
+          questions.value.push({
+            type: [studyType, variant, select],
+            studyType,
             originalTerm: term,
             data: {
               question: term.word.original,
               correct,
-              options: [],
+              options,
             },
-            status: {
-              answered: false,
-              correct: null,
-              answer: '',
-            },
-          }
+            status,
+          })
+          break
         }
-        default:
-          throw new Error('Unknown question type')
       }
-    })
+    }
+
+    questions.value = _shuffle(questions.value)
   }
 
   const answer = (answer: string) => {

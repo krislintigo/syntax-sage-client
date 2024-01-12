@@ -58,7 +58,7 @@
           @click='navigate("/unstudied")'
         )
         .h-1.bg-blue-500.mt-1.rounded(v-if='route.path === "/unstudied"')
-    el-backtop(target='#main')
+    el-backtop(target='#main', :visibility-height='2000')
       el-icon.mt-px
         ElIconArrowUpBold
     slot

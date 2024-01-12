@@ -23,70 +23,53 @@
     :show-text='false'
   )
   .flex.flex-col.justify-between.relative(v-if='currentQuestion', class='h-[95%]')
-    template(
-      v-if='["original-local", "local-original"].includes(currentQuestion.questionType)'
+    div(
+      v-if='currentQuestion.type.includes("match") || currentQuestion.type.includes("writing")'
     )
-      div
-        h3.mt-16.text-4xl {{ currentQuestion.data.question }}
-        p.mt-3.text-base.text-gray-500 {{ currentQuestion.originalTerm.word.notes.annotation }}
-      .flex.flex-col.gap-y-3.mx-3
-        .p-4.border-2.rounded-lg(
-          v-for='option in currentQuestion.data.options',
-          :key='option.value',
-          :class='getOptionColorClass(option)',
-          @click='checkAnswer(option.value)'
-        )
-          h4.text-base {{ option.value }}
-    template(v-if='currentQuestion.questionType === "writing"')
-      div
-        h3.mt-16.text-4xl {{ currentQuestion.data.question }}
-        h4.text-base.text-gray-500 {{ currentQuestion.originalTerm.word.notes.annotation }}
-      .mb-16.outline.outline-1.rounded(:class='getWritingColorClass()')
-        el-input.h-14(
-          v-model='currentQuestion.status.answer',
-          :placeholder='writingPlaceholder',
-          size='large',
-          class='!text-lg',
-          autocapitalize='off',
-          @keyup.enter='checkAnswer(currentQuestion.status.answer)'
-        )
-          template(#append)
-            el-button(
-              type='primary',
-              @click='checkAnswer(currentQuestion.status.answer)'
-            )
-              el-icon
-                ElIconCheck
-    template(
-      v-if='["audio-original", "audio-local"].includes(currentQuestion.questionType)'
+      h3.mt-16.text-4xl {{ currentQuestion.data.question }}
+      p.mt-3.text-base.text-gray-500 {{ currentQuestion.originalTerm.word.notes.annotation }}
+    el-row.mt-8(
+      v-if='currentQuestion.type.includes("audio")',
+      justify='center'
     )
-      el-row.mt-8(justify='center')
-        el-button(
-          type='primary',
-          circle,
-          size='large',
-          class='!w-32 !h-32',
-          @click='playQuestion'
-        )
-          el-icon(size='100')
-            ElIconMicrophone
-      .mb-16
-        .outline.outline-1.rounded.mb-1(:class='getAudioColorClass()')
-          el-input.h-14(
-            v-model='currentQuestion.status.answer',
-            :placeholder='audioPlaceholder',
-            size='large',
-            class='!text-lg',
-            autocapitalize='off',
-            @keyup.enter='checkAnswer(currentQuestion.status.answer)'
+      el-button(
+        type='primary',
+        circle,
+        size='large',
+        class='!w-32 !h-32',
+        @click='playQuestion'
+      )
+        el-icon(size='100')
+          ElIconMicrophone
+    .flex.flex-col.gap-y-3.mx-3(
+      v-if='currentQuestion.type.includes("options")'
+    )
+      .p-4.border-2.rounded-lg(
+        v-for='option in currentQuestion.data.options',
+        :key='option.value',
+        :class='getOptionColorClass(option)',
+        @click='checkAnswer(option.value)'
+      )
+        h4.text-base {{ option.value }}
+    .mb-16.outline.outline-1.rounded(
+      v-if='currentQuestion.type.includes("input")',
+      :class='getInputColorClass()'
+    )
+      el-input.h-14(
+        v-model='currentQuestion.status.answer',
+        :placeholder='inputPlaceholder',
+        size='large',
+        class='!text-lg',
+        autocapitalize='off',
+        @keyup.enter='checkAnswer(currentQuestion.status.answer)'
+      )
+        template(#append)
+          el-button(
+            type='primary',
+            @click='checkAnswer(currentQuestion.status.answer)'
           )
-            template(#append)
-              el-button(
-                type='primary',
-                @click='checkAnswer(currentQuestion.status.answer)'
-              )
-                el-icon
-                  ElIconCheck
+            el-icon
+              ElIconCheck
 </template>
 
 <script setup lang="ts">
@@ -132,7 +115,7 @@ const getOptionColorClass = (option: { value: string }) => {
   return 'border-gray-500'
 }
 
-const getWritingColorClass = () => {
+const getInputColorClass = () => {
   if (!currentQuestion.value.status.answered) return 'outline-none'
 
   if (currentQuestion.value.status.correct) {
@@ -141,34 +124,19 @@ const getWritingColorClass = () => {
   return 'outline-red-500'
 }
 
-const getAudioColorClass = () => {
-  if (!currentQuestion.value.status.answered) return 'outline-none'
-
-  if (currentQuestion.value.status.correct) {
-    return 'outline-green-500'
-  }
-  return 'outline-red-500'
-}
-
-const writingPlaceholder = computed(() => {
-  if (!currentQuestion.value) return ''
-
-  return t(`writing.placeholder.fi`)
-})
-
-const audioPlaceholder = computed(() => {
+const inputPlaceholder = computed(() => {
   if (!currentQuestion.value) return ''
 
   let language = ''
 
-  if (currentQuestion.value.questionType === 'audio-original') {
+  if (currentQuestion.value.type.includes('writing')) {
     language = 'fi'
   }
-  if (currentQuestion.value.questionType === 'audio-local') {
-    language = 'ru'
+  if (currentQuestion.value.type.includes('audio')) {
+    language = 'fi'
   }
 
-  return t(`audio.placeholder.${language}`)
+  return t(`input.placeholder.${language}`)
 })
 
 const playQuestion = () => {
@@ -180,10 +148,7 @@ const playQuestion = () => {
 
 watchEffect(() => {
   if (!currentQuestion.value) return
-  if (
-    currentQuestion.value.questionType === 'audio-original' ||
-    currentQuestion.value.questionType === 'audio-local'
-  ) {
+  if (currentQuestion.value.type.includes('audio')) {
     setTimeout(() => {
       playQuestion()
     }, 500)
@@ -228,14 +193,8 @@ en:
     correct: Correct
     youSaid: You said
     next: Next
-  writing:
+  input:
     placeholder:
-      en: Type in English
-      ru: Type in Russian
-      fi: Type in Finnish
-  audio:
-    placeholder:
-      en: Type in English
       ru: Type in Russian
       fi: Type in Finnish
 ru:
@@ -244,14 +203,8 @@ ru:
     correct: Правильно
     youSaid: Вы сказали
     next: Далее
-  writing:
+  input:
     placeholder:
-      en: Напишите на английском
-      ru: Напишите на русском
-      fi: Напишите на финском
-  audio:
-    placeholder:
-      en: Напишите на английском
       ru: Напишите на русском
       fi: Напишите на финском
 fi:
@@ -260,14 +213,8 @@ fi:
     correct: Oikein
     youSaid: Vastasit
     next: Seuraava
-  writing:
+  input:
     placeholder:
-      en: Kirjoita englanniksi
-      ru: Kirjoita venäjäksi
-      fi: Kirjoita suomeksi
-  audio:
-    placeholder:
-      en: Kirjoita englanniksi
       ru: Kirjoita venäjäksi
       fi: Kirjoita suomeksi
 </i18n>
