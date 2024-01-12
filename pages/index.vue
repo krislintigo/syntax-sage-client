@@ -83,7 +83,7 @@ watchEffect(() => {
     'not-studied': 'notStudied',
     learning: 'learning',
     mastered: 'mastered',
-  }
+  } as const
 
   progressStatistics.value = _merge(_cloneDeep(termStatistics), {
     notStudied: { count: 0, percentage: 0 },
