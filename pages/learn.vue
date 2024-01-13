@@ -29,6 +29,9 @@
             p.text-3xl {{ term.word.local }}
             p.text-xl {{ term.word.english }}
             p.text-lg.text-gray-400 {{ term.word.notes.annotation }}
+        //el-row.w-full.bottom-0.p-3(justify='space-between', class='!absolute')
+        //  el-button(type='warning', circle, class='!size-14') No
+        //  el-button(type='success', circle, class='!size-14') Yes
   el-button.my-5(size='large', type='primary', @click='navigateTo("/")') Finish learning
 </template>
 

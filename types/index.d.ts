@@ -1,3 +1,4 @@
+import type { ServiceInstance } from 'feathers-pinia'
 import { User as _User, Word as _Word, Term as _Term } from 'syntax-sage-server'
 
 declare module 'vue-router' {
@@ -7,9 +8,9 @@ declare module 'vue-router' {
 }
 
 declare global {
-  type User = _User
-  type Word = _Word
-  type Term = _Term
+  type User = ServiceInstance<_User> & _User
+  type Word = ServiceInstance<_Word> & _Word
+  type Term = ServiceInstance<_Term> & _Term
 
   type QuestionType = ('match' | 'writing' | 'audio' | 'original' | 'local' | 'options' | 'input')[]
 

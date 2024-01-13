@@ -94,7 +94,7 @@ watchEffect(() => {
   if (!terms$.data.length) return
 
   for (const term of terms$.data) {
-    progressStatistics.value[mapper[term.status]].count++
+    progressStatistics.value[mapper[term.status!]].count++
   }
 
   progressStatistics.value.notStudied.percentage = Math.round(
@@ -114,10 +114,16 @@ const cardClick = (key: string) => {
       navigateTo('/learn')
       break
     case 'learning':
-      ElMessage.warning('Feature not implemented yet')
+      navigateTo({
+        path: '/test/settings',
+        query: { target: 'learning' },
+      })
       break
     case 'mastered':
-      ElMessage.warning('Feature not implemented yet')
+      navigateTo({
+        path: '/test/settings',
+        query: { target: 'mastered' },
+      })
       break
   }
 }
