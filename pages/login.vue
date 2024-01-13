@@ -2,7 +2,11 @@
 .flex.flex-col.gap-y-3
   el-form(ref='form', :model='authData', :rules='rules')
     el-form-item(prop='login')
-      el-input(v-model='authData.login', :placeholder='t("form.fields.login")')
+      el-input(
+        v-model='authData.login',
+        :placeholder='t("form.fields.login")',
+        autocapitalize='off'
+      )
     el-form-item(prop='password')
       el-input(
         v-model='authData.password',
@@ -10,8 +14,8 @@
         :placeholder='t("form.fields.password")'
       )
   el-row
-    el-button.grow(type='primary', @click='register') {{ t('form.actions.register') }}
-    el-button.grow(type='primary', @click='login') {{ t('form.actions.login') }}
+    el-button.grow(type='warning', @click='register') {{ t('form.actions.register') }}
+    el-button.grow(type='success', @click='login') {{ t('form.actions.login') }}
 </template>
 
 <script setup lang="ts">

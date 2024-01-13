@@ -61,6 +61,7 @@
         size='large',
         class='!text-lg',
         autocapitalize='off',
+        autofocus,
         @keyup.enter='checkAnswer(currentQuestion.status.answer)'
       )
         template(#append)
@@ -76,16 +77,13 @@
 definePageMeta({
   layout: 'default',
   permission: ['student'],
+  middleware: ['test-setup-middleware'],
 })
 
 const voiceover = useCookie<Record<string, string>>('voiceover')
 const { t } = useI18n({ useScope: 'local' })
 const { play } = useVoiceover()
 const testStore = useTestStore()
-
-if (!testStore.questions.length) {
-  navigateTo('/', { replace: true })
-}
 
 // remove this?
 const error = reactive({

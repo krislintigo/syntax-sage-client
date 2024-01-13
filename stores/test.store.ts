@@ -24,6 +24,7 @@ export const useTestStore = defineStore('test', () => {
     total: 0,
   })
   const questions = ref<Question[]>([])
+  const masteredTerms = ref<Term[]>([])
 
   const start = ({
     numberOfQuestions, // not more than 3 for each term
@@ -160,5 +161,5 @@ export const useTestStore = defineStore('test', () => {
     questions.value = []
   }
 
-  return { progress, questions, start, answer, reset }
+  return { progress, questions, masteredTerms, start, answer, reset }
 })

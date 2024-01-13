@@ -150,5 +150,5 @@ fi:
   tabs:
     terms: Termit
     favourites: Suosikit
-    unstudied: Opiskelemattomat
+    unstudied: Opettelemattomat
 </i18n>

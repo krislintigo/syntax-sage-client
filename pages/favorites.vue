@@ -8,37 +8,11 @@ div
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
       .border-2.rounded-xl.border-gray-600.p-4.mb-3
-        template(v-if='favorite$.total >= 1')
-          h3.text-xl.text-center.mb-5 {{ t('settings.title') }}
-          el-row.gap-x-3(justify='space-between', align='middle')
-            h4.w-20.text-base {{ t('settings.numberOfQuestions') }}
-            el-input-number(
-              v-model='learnSettings.questions',
-              :max='favorite$.total * learnSettings.questionTypes.length',
-              :min='1'
-            )
-          .my-5
-          el-row.gap-x-3(justify='space-between', align='middle')
-            h4.w-20.text-base {{ t('settings.questionTypes') }}
-            el-checkbox-group(v-model='learnSettings.questionTypes')
-              el-checkbox-button(label='match')
-                el-icon
-                  ElIconConnection
-              el-checkbox-button(label='writing')
-                el-icon
-                  ElIconEditPen
-              el-checkbox-button(label='audio')
-                el-icon
-                  ElIconHeadset
-          .mt-4
-          el-row(justify='center')
-            el-button.w-full(
-              type='primary',
-              size='large',
-              @click='startLearning'
-            ) {{ t('settings.startTest') }}
-        template(v-else)
-          h3.text-xl.text-center.px-3 {{ t('settings.addMoreToContinue') }}
+        LearnSettings(
+          v-model='learnSettings',
+          :count='favorite$.total',
+          @start='startLearning'
+        )
       WordCard(
         v-for='term in favorite$.data',
         :key='term._id',
@@ -55,7 +29,6 @@ definePageMeta({
   permission: ['student'],
 })
 
-const { t } = useI18n()
 const { api } = useFeathers()
 const authStore = useAuthStore()
 const testStore = useTestStore()
@@ -125,56 +98,6 @@ const startLearning = async () => {
   })
   await navigateTo('/test')
 }
-
-watchEffect(() => {
-  learnSettings.questions = Math.min(favorite$.total, 50)
-  if (!learnSettings.questionTypes.length) {
-    learnSettings.questionTypes = ['match']
-  }
-})
-watchEffect(() => {})
 </script>
 
 <style scoped lang="scss"></style>
-
-<i18n lang="yaml">
-en:
-  settings:
-    title: Keep learning!
-    addMoreToContinue: Add more terms to enable testing and continue learning!
-    numberOfQuestions: Number of questions
-    questionTypes: Types of questions
-    startTest: Start test
-  details:
-    learningProgress: Learning progress
-    matches: Matches
-    audio: Audio
-    writing: Writing
-    grammarNotes: Grammar notes
-ru:
-  settings:
-    title: Продолжайте учиться!
-    addMoreToContinue: Добавьте больше терминов, чтобы включить тестирование и продолжить обучение!
-    numberOfQuestions: Количество вопросов
-    questionTypes: Типы вопросов
-    startTest: Начать тест
-  details:
-    learningProgress: Прогресс изучения
-    matches: Соответствие
-    audio: Аудирование
-    writing: Написание
-    grammarNotes: Грамматические заметки
-fi:
-  settings:
-    title: Jatka opiskelua!
-    addMoreToContinue: Lisää sanoja suorittaaksesi testit ja jatkaksesi opiskelua!
-    numberOfQuestions: Kysymysmäärä
-    questionTypes: Kysymystyypit
-    startTest: Aloita testi
-  details:
-    learningProgress: Oppimisen edistyminen
-    matches: Osumat
-    audio: Kuuntelu
-    writing: Kirjoitus
-    grammarNotes: Kielioppihuomautukset
-</i18n>

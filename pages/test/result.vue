@@ -12,15 +12,19 @@
       h3.text-blue-500.text-base
         span {{ t('result.result') }}:
         span.ml-1.text-2xl {{ Math.round((correct / (correct + incorrect)) * 100) }} %
-    el-button.mb-8(type='primary', size='large', @click='goHome') {{ t('result.goHome') }}
+    el-button.mb-8(type='primary', size='large', @click='next') {{ t('result.goHome') }}
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  layout: 'default',
+  permission: ['student'],
+  middleware: ['test-setup-middleware'],
+})
+
 const { t } = useI18n({ useScope: 'local' })
+const { api } = useFeathers()
 const testStore = useTestStore()
-if (!testStore.questions.length) {
-  navigateTo('/', { replace: true })
-}
 
 const correct = computed(
   () => testStore.questions.filter((q) => q.status.correct).length,
@@ -28,6 +32,28 @@ const correct = computed(
 const incorrect = computed(
   () => testStore.questions.filter((q) => !q.status.correct).length,
 )
+
+const next = async () => {
+  const searchIds = testStore.questions
+    .filter(({ status: { answered, correct } }) => answered && correct)
+    .map((q) => q.originalTerm._id)
+  const mastered = await api.service('terms').find({
+    query: {
+      _id: { $in: searchIds },
+      favorite: true,
+      status: 'mastered',
+      $paginate: false,
+    },
+  })
+  console.log(mastered)
+  if (mastered.total) {
+    testStore.masteredTerms = mastered.data as Term[]
+    await navigateTo('/test/remove-mastered', { replace: true })
+  } else {
+    await navigateTo('/', { replace: true })
+    testStore.reset()
+  }
+}
 
 const goHome = async () => {
   await navigateTo('/', { replace: true })

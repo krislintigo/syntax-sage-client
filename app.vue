@@ -1,5 +1,5 @@
 <template lang="pug">
-div
+.select-none
   NuxtPwaManifest
   NuxtLayout
     NuxtPage
