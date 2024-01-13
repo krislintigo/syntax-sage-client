@@ -25,7 +25,13 @@ export default defineNuxtConfig({
     layoutTransition: { name: 'layout', mode: 'out-in' },
     pageTransition: { name: 'page', mode: 'out-in' },
     head: {
-      link: [{ rel: 'icon', type: 'image/x-icon', href: '/icon.svg' }],
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/icons/icon-192x192.png' },
+        {
+          rel: 'apple-touch-icon',
+          href: '/icons/apple-touch-icon-180x180.png',
+        },
+      ],
       meta: [
         {
           name: 'viewport',
@@ -85,7 +91,18 @@ export default defineNuxtConfig({
       short_name: 'Syntax Sage',
       theme_color: '#000',
       background_color: '#0a0a0a',
-      // icons: [],
+      icons: [
+        {
+          src: '/icons/icon-192x192.png',
+          type: 'image/png',
+          sizes: '192x192',
+        },
+        {
+          src: '/icons/icon-512x512.png',
+          type: 'image/png',
+          sizes: '512x512',
+        },
+      ],
       description: 'Application for studying words by courses and categories.',
       categories: ['education', 'productivity'],
       orientation: 'portrait-primary',
