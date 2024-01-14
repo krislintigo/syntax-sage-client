@@ -1,5 +1,5 @@
 export const CATEGORIES = [
-  { title: (t: any) => t('categories.labels.verbs'), value: 'any' },
+  { title: (t: any) => t('categories.labels.verbs'), value: 'verbs' },
   // generate by list of categories upper
   { title: (t: any) => t('categories.labels.adjectives'), value: 'adjectives' },
   { title: (t: any) => t('categories.labels.adverbs'), value: 'adverbs' },

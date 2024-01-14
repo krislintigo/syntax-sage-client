@@ -1,5 +1,5 @@
 <template lang="pug">
-.mx-auto
+.mx-auto.select-text
   el-header
     el-row(justify='space-between', align='middle', class='px-[5%]')
       h1.mt-6.text-3xl Syntax Sage. Admin

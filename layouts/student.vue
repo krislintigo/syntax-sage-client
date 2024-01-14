@@ -119,9 +119,9 @@ const unstudied$ = api
 
 unstudied$.isSsr && (await unstudied$.request)
 
-const navigate = (page: string) => {
-  navigateTo(`${page}`)
-}
+api.service('terms').on('created', () => unstudied$.find())
+
+const navigate = (page: string) => navigateTo(`${page}`)
 </script>
 
 <style scoped lang="scss"></style>

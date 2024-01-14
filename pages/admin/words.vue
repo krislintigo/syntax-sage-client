@@ -9,7 +9,7 @@ div
       class='!w-60'
     )
     client-only
-      el-select(v-model='filter.course')
+      el-select(v-model='filter.course', class='!w-48')
         el-option(
           v-for='item in COURSES',
           :key='item.value',
@@ -42,9 +42,10 @@ div
     el-form(ref='form', :model='word', :rules='rules', label-position='top')
       el-row.gap-x-3
         el-button.w-40.mb-5(type='danger', @click='addNew') Reset form
+        h3.text-amber-500.text-xl(v-if='duplicate') Found duplicate for {{ duplicate }}
       el-row.gap-x-5
         el-form-item(label='Original', prop='original')
-          el-input(v-model='word.original')
+          el-input(v-model='word.original', @blur='checkDuplicate')
         el-form-item(label='Local', prop='local')
           el-input(v-model='word.local')
         el-form-item(label='English', prop='english')
@@ -53,7 +54,7 @@ div
           el-input(v-model='word.notes.annotation')
         el-form-item(label='Course', prop='course')
           client-only
-            el-select(v-model='word.course')
+            el-select(v-model='word.course', class='!w-48')
               el-option(
                 v-for='item in COURSES',
                 :key='item.value',
@@ -62,7 +63,7 @@ div
               )
         el-form-item(label='Categories', prop='categories')
           client-only
-            el-select(v-model='word.categories', multiple)
+            el-select(v-model='word.categories', multiple, class='!w-52')
               el-option(
                 v-for='item in CATEGORIES',
                 :key='item.value',
@@ -175,7 +176,7 @@ const fileUpload = reactive({
 const upload = ref<UploadInstance>()
 const form = ref<any>(null)
 const word = ref(api.service('words').new())
-const previousOriginal = ref('')
+const duplicate = ref('')
 
 const query = computed(() => ({
   query: {
@@ -214,7 +215,6 @@ const addNew = () => {
 
 const edit = ({ _id }: any) => {
   word.value = api.service('words').getFromStore(_id, { clones: true }).value
-  previousOriginal.value = word.value.original as string
 }
 
 const remove = async ({ _id }: any) => {
@@ -223,31 +223,30 @@ const remove = async ({ _id }: any) => {
   ElMessage.success('Word removed')
 }
 
+const checkDuplicate = async () => {
+  word.value.original = word.value.original!.trim()
+  if (!word.value.original) {
+    duplicate.value = ''
+    return
+  }
+  const response = await api.service('words').find({
+    query: {
+      ...(word.value._id && { _id: { $ne: word.value._id } }),
+      original: word.value.original,
+      course: 'rus-fin',
+      $limit: 1,
+    },
+  })
+  if (response.total) {
+    duplicate.value = `${response.data[0].original} - ${response.data[0].local}`
+  } else {
+    duplicate.value = ''
+  }
+}
+
 const save = async () => {
   const valid = await validate()
   if (!valid) return ElMessage.warning('Form is not valid')
-
-  if (!word.value._id || previousOriginal.value !== word.value.original) {
-    const duplicate = await api.service('words').find({
-      query: {
-        original: word.value.original,
-        course: word.value.course,
-        $limit: 1,
-      },
-    })
-    if (duplicate.total) {
-      const result = await ElMessageBox.confirm(
-        `Found duplicate for ${duplicate.data[0].original} - ${duplicate.data[0].local}`,
-        'Duplicate',
-        {
-          confirmButtonText: 'Still save',
-          cancelButtonText: 'Cancel',
-          type: 'warning',
-        },
-      ).catch(() => false)
-      if (!result) return
-    }
-  }
 
   await word.value.save()
   ElMessage.success('Word saved')

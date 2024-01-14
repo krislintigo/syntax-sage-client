@@ -44,7 +44,7 @@ const query = computed(() => ({
     status: target.value,
     studied: true,
     ...(target.value === 'mastered' && {
-      lastStudiedAt: { $lte: dayjs().subtract(7, 'days').toISOString() },
+      lastStudiedAt: { $lte: dayjs().subtract(5, 'days').toISOString() },
     }),
     $paginate: false,
   },
