@@ -21,8 +21,8 @@ export const CATEGORIES = [
     value: 'celebrations',
   },
   {
-    title: (t: any) => t('categories.labels.workProfession'),
-    value: 'work-profession',
+    title: (t: any) => t('categories.labels.workProfessions'),
+    value: 'work-professions',
   },
   { title: (t: any) => t('categories.labels.home'), value: 'home' },
   { title: (t: any) => t('categories.labels.city'), value: 'city' },
