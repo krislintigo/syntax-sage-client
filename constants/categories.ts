@@ -9,8 +9,8 @@ export const CATEGORIES = [
   },
   { title: (t: any) => t('categories.labels.food'), value: 'food' },
   {
-    title: (t: any) => t('categories.labels.healthFitness'),
-    value: 'health-fitness',
+    title: (t: any) => t('categories.labels.healthBody'),
+    value: 'health-body',
   },
   {
     title: (t: any) => t('categories.labels.hobbiesSports'),
