@@ -16,6 +16,14 @@ export const CATEGORIES = [
     title: (t: any) => t('categories.labels.hobbiesSports'),
     value: 'hobbies-sports',
   },
+  {
+    title: (t: any) => t('categories.labels.celebrations'),
+    value: 'celebrations',
+  },
+  {
+    title: (t: any) => t('categories.labels.workProfession'),
+    value: 'work-profession',
+  },
   { title: (t: any) => t('categories.labels.home'), value: 'home' },
   { title: (t: any) => t('categories.labels.city'), value: 'city' },
   { title: (t: any) => t('categories.labels.education'), value: 'education' },
