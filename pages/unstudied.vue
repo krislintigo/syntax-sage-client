@@ -84,7 +84,8 @@ const studyWords = async () => {
   const newTerms = toStudy.ids.map((wordId) =>
     api.service('terms').new({ wordId, userId: authStore.user._id }),
   )
-  await Promise.all(newTerms.map((term) => term.save()))
+  await api.service('terms').create(newTerms as Term[])
+  // await Promise.all(newTerms.map((term) => term.save()))
   await unstudied$.find()
   toStudy.isSelect = false
   toStudy.ids = []

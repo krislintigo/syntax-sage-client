@@ -3,10 +3,11 @@
   h3(v-if='!terms$.data.length') Nothing to repeat
   el-carousel.rounded.grow(
     v-else,
+    ref='carouserRef',
     :autoplay='false',
     :loop='false',
     indicator-position='none',
-    arrow='always',
+    arrow='never',
     height='100%'
   )
     el-carousel-item(v-for='(term, i) in terms$.data', :key='term._id')
@@ -29,9 +30,20 @@
             p.text-3xl {{ term.word.local }}
             p.text-xl {{ term.word.english }}
             p.text-lg.text-gray-400 {{ term.word.notes.annotation }}
-        //el-row.w-full.bottom-0.p-3(justify='space-between', class='!absolute')
-        //  el-button(type='warning', circle, class='!size-14') No
-        //  el-button(type='success', circle, class='!size-14') Yes
+            .mt-3.ml-3.text-left.border-l-2.rounded-sm(
+              v-if='!isEmpty(term.word.notes.grammar)'
+            )
+              TextEditor(
+                :model-value='term.word.notes.grammar',
+                target='grammar-notes'
+              )
+        el-row.w-full.bottom-0.p-3(justify='space-between', class='!absolute')
+          el-button(type='warning', circle, class='!size-14', @click.stop='skip')
+            el-icon(:size='20')
+              ElIconClose
+          el-button(type='success', circle, class='!size-14', @click.stop='view(term)')
+            el-icon(:size='20')
+              ElIconCheck
   el-button.my-5(size='large', type='primary', @click='navigateTo("/")') Finish learning
 </template>
 
@@ -44,13 +56,15 @@ definePageMeta({
 const { api } = useFeathers()
 const authStore = useAuthStore()
 
+const carouserRef = ref<any>(null)
+const current = ref(0)
 const flipped = ref<boolean[]>([])
 
 const termsQuery = computed(() => ({
   query: {
     userId: authStore.user._id,
     studied: true,
-    status: 'not-studied',
+    viewed: false,
     $paginate: false,
   },
 }))
@@ -63,10 +77,25 @@ terms$.isSsr && (await terms$.request)
 
 watchEffect(() => {
   flipped.value = terms$.data.map(() => false)
+  if (carouserRef.value) {
+    if (current.value >= terms$.data.length) {
+      return navigateTo('/')
+    }
+    carouserRef.value.setActiveItem(current.value)
+  }
 })
 
 const changeFavorite = async ({ _id, favorite }: Term) => {
   await api.service('terms').patch(_id as string, { favorite: !favorite })
+}
+
+const skip = () => {
+  current.value += 1
+  carouserRef.value.setActiveItem(current.value)
+}
+
+const view = async (term: Term) => {
+  await api.service('terms').patch(term._id as string, { viewed: true })
 }
 </script>
 

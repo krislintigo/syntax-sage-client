@@ -5,20 +5,14 @@
     h3.text-base {{ t('details.matches') }}: {{ term.studies.match }}
     h3.text-base {{ t('details.writing') }}: {{ term.studies.writing }}
     h3.text-base {{ t('details.audio') }}: {{ term.studies.audio }}
-  .mt-3(v-if='displayGrammarNotes')
-    h3.text-lg {{ t('details.grammarNotes') }}:
+  .mt-3.border-l.rounded-sm(v-if='!isEmpty(term.word.notes.grammar)')
     TextEditor(:model-value='term.word.notes.grammar', target='grammar-notes')
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{ term: Term }>()
+defineProps<{ term: Term }>()
 
 const { t } = useI18n({ useScope: 'local' })
-
-const displayGrammarNotes = computed(() => {
-  const grammar = props.term.word.notes.grammar
-  return grammar !== '' && grammar !== '<p></p>'
-})
 </script>
 
 <style scoped lang="scss"></style>

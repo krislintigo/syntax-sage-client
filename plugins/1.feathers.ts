@@ -81,6 +81,7 @@ export default defineNuxtPlugin((nuxt) => {
           const defaults = {
             favorite: false,
             studied: true,
+            viewed: false,
             studies: {
               match: 0,
               audio: 0,

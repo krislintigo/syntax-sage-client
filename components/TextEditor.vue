@@ -91,7 +91,6 @@ onMounted(() => {
 <style lang="scss">
 .grammar-notes .ProseMirror {
   padding: 5px 10px;
-  border-left: 1px solid dimgray;
 }
 
 .grammar-notes.editable .ProseMirror {
