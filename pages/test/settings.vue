@@ -1,6 +1,6 @@
 <template lang="pug">
 .h-full
-  h2.mb-5.text-center.text-2xl Learn terms: {{ target }}
+  h2.mb-5.text-center.text-2xl {{ title }}:
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
       .border-2.rounded-xl.border-gray-600.p-4.mb-3
@@ -15,18 +15,21 @@
         :word='term.word',
         hide-favorite
       )
-      el-button(@click='navigateTo("/")') Back home
+      el-button.mt-3.my-8(
+        size='large',
+        type='primary',
+        @click='navigateTo("/")'
+      ) Back home
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs'
-
 definePageMeta({
   layout: 'default',
   permission: ['student'],
 })
 
 const route = useRoute()
+const { t } = useI18n({ useScope: 'local' })
 const { api } = useFeathers()
 const authStore = useAuthStore()
 const testStore = useTestStore()
@@ -37,6 +40,8 @@ const learnSettings = reactive({
 })
 
 const target = computed(() => route.query.target)
+
+const title = computed(() => t(`title.${target.value}`))
 
 const query = computed(() => ({
   query: {
@@ -51,8 +56,6 @@ const query = computed(() => ({
 }))
 
 const terms$ = api.service('terms').useFind(query, { paginateOn: 'server' })
-
-watchEffect(() => console.log(terms$.data))
 
 terms$.isSsr && (await terms$.request)
 
@@ -71,3 +74,18 @@ const startLearning = async () => {
 </script>
 
 <style scoped lang="scss"></style>
+
+<i18n lang="yaml">
+en:
+  title:
+    learning: 'Study terms below'
+    mastered: 'Repeat mastered terms'
+ru:
+  title:
+    learning: 'Study terms below'
+    mastered: 'Repeat mastered terms'
+fi:
+  title:
+    learning: 'Study terms below'
+    mastered: 'Repeat mastered terms'
+</i18n>

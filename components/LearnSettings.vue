@@ -1,7 +1,7 @@
 <template lang="pug">
 div
   template(v-if='count >= 1')
-    h3.text-xl.text-center.mb-5 {{ t('settings.title') }}
+    h3.text-xl.text-center.mb-5(v-if='title') {{ title }}
     el-row.gap-x-3(justify='space-between', align='middle')
       h4.w-20.text-base {{ t('settings.numberOfQuestions') }}
       el-input-number(
@@ -35,7 +35,11 @@ type Settings = {
   questionTypes: (keyof Term['studies'])[]
 }
 
-const props = defineProps<{ modelValue: Settings; count: number }>()
+const props = defineProps<{
+  modelValue: Settings
+  title?: string
+  count: number
+}>()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: Settings): void
@@ -48,6 +52,14 @@ const settings = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value),
 })
+
+const title = computed(() =>
+  props.title
+    ? props.title === '$default'
+      ? t('settings.title')
+      : props.title
+    : '',
+)
 
 watchEffect(() => {
   settings.value.questions = Math.min(props.count, 50)

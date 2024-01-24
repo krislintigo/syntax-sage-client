@@ -10,6 +10,7 @@ div
       .border-2.rounded-xl.border-gray-600.p-4.mb-3
         LearnSettings(
           v-model='learnSettings',
+          title='$default',
           :count='favorite$.total',
           @start='startLearning'
         )
