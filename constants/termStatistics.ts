@@ -1,6 +1,6 @@
 export const termStatistics = {
   notStudied: {
-    title: (t: any) => t('termStatistics.labels.notStudied'),
+    title: (t: any) => t('termStatistics.labels.newToLearn'),
     color: '#5961a8',
   },
   learning: {

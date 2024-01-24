@@ -44,13 +44,15 @@ const query = computed(() => ({
     status: target.value,
     studied: true,
     ...(target.value === 'mastered' && {
-      lastStudiedAt: { $lte: dayjs().subtract(5, 'days').toISOString() },
+      $repeat: true,
     }),
     $paginate: false,
   },
 }))
 
 const terms$ = api.service('terms').useFind(query, { paginateOn: 'server' })
+
+watchEffect(() => console.log(terms$.data))
 
 terms$.isSsr && (await terms$.request)
 

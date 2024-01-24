@@ -6,7 +6,7 @@ courses:
     rusFin: Venäjä - Suomi
 termStatistics:
   labels:
-    notStudied: Opeteltavat
+    newToLearn: Uusia opeteltavia
     stillLearning: Keskeneräiset
     mastered: Opetellut
 categories:
