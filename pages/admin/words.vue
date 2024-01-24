@@ -139,7 +139,6 @@ const rules: FormRules = {
       trigger: 'blur',
     },
   ],
-
   local: [
     {
       required: true,
@@ -211,6 +210,7 @@ const validate = async () => {
 const addNew = () => {
   word.value.reset()
   word.value = api.service('words').new()
+  duplicate.value = ''
 }
 
 const edit = ({ _id }: any) => {
@@ -234,11 +234,12 @@ const checkDuplicate = async () => {
       ...(word.value._id && { _id: { $ne: word.value._id } }),
       original: word.value.original,
       course: 'rus-fin',
-      $limit: 1,
     },
   })
   if (response.total) {
-    duplicate.value = `${response.data[0].original} - ${response.data[0].local}`
+    duplicate.value = response.data
+      .map((word) => `${word.original} - ${word.local}`)
+      .join(' /// ')
   } else {
     duplicate.value = ''
   }
@@ -250,6 +251,7 @@ const save = async () => {
 
   await word.value.save()
   ElMessage.success('Word saved')
+  duplicate.value = ''
   word.value.reset()
   addNew()
 }

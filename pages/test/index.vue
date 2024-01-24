@@ -28,6 +28,7 @@
     )
       h3.mt-16.text-4xl {{ currentQuestion.data.question }}
       p.mt-3.text-base.text-gray-500 {{ currentQuestion.originalTerm.word.notes.annotation }}
+      p.mt-3.text-xl.text-gray-500(@click='showEnglish = !showEnglish') {{ showEnglish ? currentQuestion.originalTerm.word.english : '*****' }}
     el-row.mt-8(
       v-if='currentQuestion.type.includes("audio")',
       justify='center'
@@ -92,6 +93,7 @@ const error = reactive({
   answer: '',
   correct: '',
 })
+const showEnglish = ref(false)
 
 const progress = computed(() => testStore.progress)
 const currentQuestion = computed(
