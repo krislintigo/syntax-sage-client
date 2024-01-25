@@ -39,8 +39,8 @@ dependencies:
     specifier: ^4.7.4
     version: 4.7.4
   syntax-sage-server:
-    specifier: ./server/syntax-sage-server-1.0.0.tgz
-    version: file:server/syntax-sage-server-1.0.0.tgz(typescript@5.3.3)
+    specifier: ./server/syntax-sage-server-1.0.1.tgz
+    version: file:server/syntax-sage-server-1.0.1.tgz(typescript@5.3.3)
 
 devDependencies:
   '@element-plus/nuxt':
@@ -12294,11 +12294,11 @@ packages:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
     dev: false
 
-  file:server/syntax-sage-server-1.0.0.tgz(typescript@5.3.3):
-    resolution: {integrity: sha512-nR4rEvUzd0eAGjZEavByTQbTEFX3s2s4rvqBrIQ8VFikyuZ0p/vrx3OokLXphLJNkiuAhdC2PorSWDezn86XWQ==, tarball: file:server/syntax-sage-server-1.0.0.tgz}
-    id: file:server/syntax-sage-server-1.0.0.tgz
+  file:server/syntax-sage-server-1.0.1.tgz(typescript@5.3.3):
+    resolution: {integrity: sha512-c4a2SltWUUI/R9h7RNl+wRiEo+7rm9zFi//xV7X437RvA5F2ttB+otvAk2q+Uj1bUkarVaARkErmnMRhQVkvfA==, tarball: file:server/syntax-sage-server-1.0.1.tgz}
+    id: file:server/syntax-sage-server-1.0.1.tgz
     name: syntax-sage-server
-    version: 1.0.0
+    version: 1.0.1
     engines: {node: '>= 18.14.2'}
     dependencies:
       '@feathersjs/adapter-commons': 5.0.14

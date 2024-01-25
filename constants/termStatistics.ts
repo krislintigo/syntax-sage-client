@@ -1,10 +1,10 @@
 export const termStatistics = {
-  notStudied: {
-    title: (t: any) => t('termStatistics.labels.newToLearn'),
+  new: {
+    title: (t: any) => t('termStatistics.labels.new'),
     color: '#5961a8',
   },
   learning: {
-    title: (t: any) => t('termStatistics.labels.stillLearning'),
+    title: (t: any) => t('termStatistics.labels.learning'),
     color: '#e6a23c',
   },
   mastered: {

@@ -6,8 +6,8 @@ courses:
     rusFin: Russian - Finnish
 termStatistics:
   labels:
-    newToLearn: New to learn
-    stillLearning: Still learning
+    new: New to learn
+    lLearning: Still learning
     mastered: Mastered
 categories:
   labels:

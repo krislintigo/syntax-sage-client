@@ -7,16 +7,14 @@ div
       TermDetails(:term='detailDialog.term')
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
-      template(v-if='progressStatistics')
-        ProgressCard(
-          v-for='(stat, key) in progressStatistics',
-          :key='key',
-          :title='stat.title',
-          :count='stat.count',
-          :percentage='stat.percentage',
-          :color='stat.color',
-          @click='cardClick(key)'
-        )
+      ProgressCard(
+        v-for='status in ["new", "learning", "mastered"]',
+        :key='status',
+        :status='status',
+        :query='termsQuery',
+        :total='terms$.total',
+        @click='cardClick(status)'
+      )
       el-divider
       WordCard(
         v-for='term in terms$.data',
@@ -81,39 +79,9 @@ const terms$ = api
 
 terms$.isSsr && (await terms$.request)
 
-watchEffect(() => {
-  const mapper = {
-    'not-studied': 'notStudied',
-    learning: 'learning',
-    mastered: 'mastered',
-  } as const
-
-  progressStatistics.value = _merge(_cloneDeep(termStatistics), {
-    notStudied: { count: 0, percentage: 0 },
-    learning: { count: 0, percentage: 0 },
-    mastered: { count: 0, percentage: 0 },
-  })
-
-  if (!terms$.data.length) return
-
-  for (const term of terms$.data) {
-    progressStatistics.value[mapper[term.status!]].count++
-  }
-
-  progressStatistics.value.notStudied.percentage = Math.round(
-    (progressStatistics.value.notStudied.count / terms$.data.length) * 100,
-  )
-  progressStatistics.value.learning.percentage = Math.round(
-    (progressStatistics.value.learning.count / terms$.data.length) * 100,
-  )
-  progressStatistics.value.mastered.percentage = Math.round(
-    (progressStatistics.value.mastered.count / terms$.data.length) * 100,
-  )
-})
-
-const cardClick = (key: string) => {
+const cardClick = (key: Term['status']) => {
   switch (key) {
-    case 'notStudied':
+    case 'new':
       navigateTo('/learn')
       break
     case 'learning':
