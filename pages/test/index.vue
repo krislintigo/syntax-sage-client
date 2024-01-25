@@ -175,6 +175,7 @@ const checkAnswer = async (_answer: string) => {
 
 const nextQuestion = () => {
   error.dialog = false
+  showEnglish.value = false
   setTimeout(() => {
     progress.value.current += 1
     if (progress.value.current === progress.value.total) {

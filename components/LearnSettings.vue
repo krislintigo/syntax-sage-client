@@ -6,7 +6,7 @@ div
       h4.w-20.text-base {{ t('settings.numberOfQuestions') }}
       el-input-number(
         v-model='settings.questions',
-        :max='count * settings.questionTypes.length',
+        :max='Math.min(count * settings.questionTypes.length, 50)',
         :min='1'
       )
     .my-5
@@ -30,28 +30,19 @@ div
 </template>
 
 <script setup lang="ts">
-type Settings = {
-  questions: number
-  questionTypes: (keyof Term['studies'])[]
-}
-
 const props = defineProps<{
-  modelValue: Settings
   title?: string
   count: number
 }>()
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: Settings): void
-  (e: 'start'): void
-}>()
+defineEmits<{ (e: 'start'): void }>()
 
 const { t } = useI18n({ useScope: 'local' })
 
-const settings = computed({
-  get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
-})
+const settings = defineModel<{
+  questions: number
+  questionTypes: (keyof Term['studies'])[]
+}>({ required: true })
 
 const title = computed(() =>
   props.title

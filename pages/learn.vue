@@ -1,49 +1,41 @@
 <template lang="pug">
 .h-full.flex.flex-col
   h3(v-if='!terms$.data.length') Nothing to repeat
-  el-carousel.rounded.grow(
-    v-else,
-    ref='carouserRef',
-    :autoplay='false',
-    :loop='false',
-    indicator-position='none',
-    arrow='never',
-    height='100%'
+  .relative.flex.flex-col.justify-center.text-center.h-full.bg-gray-600.rounded.transition-transform(
+    v-else-if='term',
+    :class='{ slideLeft: isSlideLeft, slideRight: isSlideRight }',
+    @click='flipped = !flipped'
   )
-    el-carousel-item(v-for='(term, i) in terms$.data', :key='term._id')
-      .relative.flex.flex-col.justify-center.text-center.h-full(
-        @click='flipped[i] = !flipped[i]'
-      )
-        el-button.absolute.top-3.right-3(
-          circle,
-          text,
-          :type='term.favorite ? "warning" : "info"',
-          @click.stop='changeFavorite(term)'
+    el-button.absolute.top-3.right-3(
+      circle,
+      text,
+      :type='term.favorite ? "warning" : "info"',
+      @click.stop='changeFavorite(term)'
+    )
+      el-icon(:size='term.favorite ? "25" : "20"')
+        component(:is='term.favorite ? ElIconStarFilled : ElIconStar')
+    transition(name='el-zoom-in-top')
+      div(v-show='!flipped')
+        h3.text-3xl {{ term.word.original }}
+    transition(name='el-zoom-in-bottom')
+      div(v-show='flipped')
+        p.text-3xl {{ term.word.local }}
+        p.text-xl {{ term.word.english }}
+        p.text-lg.text-gray-400 {{ term.word.notes.annotation }}
+        .mt-3.ml-3.text-left.border-l-2.rounded-sm(
+          v-if='!isEmpty(term.word.notes.grammar)'
         )
-          el-icon(:size='term.favorite ? "25" : "20"')
-            component(:is='term.favorite ? ElIconStarFilled : ElIconStar')
-        transition(name='el-zoom-in-top')
-          div(v-show='!flipped[i]', :key='!flipped[i]')
-            h3.text-3xl {{ term.word.original }}
-        transition(name='el-zoom-in-bottom')
-          div(v-show='flipped[i]', :key='flipped[i]')
-            p.text-3xl {{ term.word.local }}
-            p.text-xl {{ term.word.english }}
-            p.text-lg.text-gray-400 {{ term.word.notes.annotation }}
-            .mt-3.ml-3.text-left.border-l-2.rounded-sm(
-              v-if='!isEmpty(term.word.notes.grammar)'
-            )
-              TextEditor(
-                :model-value='term.word.notes.grammar',
-                target='grammar-notes'
-              )
-        el-row.w-full.bottom-0.p-3(justify='space-between', class='!absolute')
-          el-button(type='warning', circle, class='!size-14', @click.stop='skip')
-            el-icon(:size='20')
-              ElIconClose
-          el-button(type='success', circle, class='!size-14', @click.stop='view(term)')
-            el-icon(:size='20')
-              ElIconCheck
+          TextEditor(
+            :model-value='term.word.notes.grammar',
+            target='grammar-notes'
+          )
+    el-row.w-full.bottom-0.p-3(justify='space-between', class='!absolute')
+      el-button(type='warning', circle, class='!size-14', @click.stop='skip')
+        el-icon(:size='20')
+          ElIconClose
+      el-button(type='success', circle, class='!size-14', @click.stop='view(term)')
+        el-icon(:size='20')
+          ElIconCheck
   el-button.my-5(size='large', type='primary', @click='navigateTo("/")') Finish learning
 </template>
 
@@ -56,16 +48,16 @@ definePageMeta({
 const { api } = useFeathers()
 const authStore = useAuthStore()
 
-const carouserRef = ref<any>(null)
-const current = ref(0)
-const flipped = ref<boolean[]>([])
+const flipped = ref<boolean>(false)
+const isSlideLeft = ref(false)
+const isSlideRight = ref(false)
 
 const termsQuery = computed(() => ({
   query: {
     userId: authStore.user._id,
     studied: true,
     viewed: false,
-    $paginate: false,
+    $limit: 1,
   },
 }))
 
@@ -75,13 +67,13 @@ const terms$ = api
 
 terms$.isSsr && (await terms$.request)
 
+const term = computed(() => terms$.data[0])
+
+// test
 watchEffect(() => {
-  flipped.value = terms$.data.map(() => false)
-  if (carouserRef.value) {
-    if (current.value >= terms$.data.length) {
-      return navigateTo('/')
-    }
-    carouserRef.value.setActiveItem(current.value)
+  console.log('terms', terms$.skip, terms$.total)
+  if (terms$.skip === terms$.total) {
+    return navigateTo('/')
   }
 })
 
@@ -90,17 +82,28 @@ const changeFavorite = async ({ _id, favorite }: Term) => {
 }
 
 const skip = () => {
-  current.value += 1
-  carouserRef.value.setActiveItem(current.value)
+  isSlideLeft.value = true
+  terms$.skip += 1
+  flipped.value = false
+  setTimeout(() => {
+    isSlideLeft.value = false
+  }, 300)
 }
 
 const view = async (term: Term) => {
+  isSlideRight.value = true
   await api.service('terms').patch(term._id as string, { viewed: true })
+  flipped.value = false
+  isSlideRight.value = false
 }
 </script>
 
 <style scoped lang="scss">
-.el-carousel__item {
-  background-color: #475669;
+.slideLeft {
+  transform: translate(-80px, 15px) rotate(-5deg);
+}
+
+.slideRight {
+  transform: translate(80px, 15px) rotate(5deg);
 }
 </style>

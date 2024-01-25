@@ -23,6 +23,12 @@ div
           @click='pushToStudy(word)'
         ) {{  }}
         WordCard.grow(:word='word', hide-favorite, @click='pushToStudy(word)')
+      el-pagination(
+        v-model:current-page='unstudied$.currentPage',
+        :total='unstudied$.total',
+        layout='prev, pager, next',
+        :hide-on-single-page='unstudied$.limit === 10'
+      )
 </template>
 
 <script setup lang="ts">
@@ -56,7 +62,6 @@ const unstudiedQuery = computed(() => ({
         $in: filter.categories,
       },
     }),
-    $paginate: false,
   },
 }))
 

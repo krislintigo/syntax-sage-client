@@ -45,7 +45,6 @@ const next = async () => {
       $paginate: false,
     },
   })
-  console.log(mastered)
   if (mastered.total) {
     testStore.masteredTerms = mastered.data as Term[]
     await navigateTo('/test/remove-mastered', { replace: true })
@@ -53,11 +52,6 @@ const next = async () => {
     await navigateTo('/', { replace: true })
     testStore.reset()
   }
-}
-
-const goHome = async () => {
-  await navigateTo('/', { replace: true })
-  testStore.reset()
 }
 </script>
 

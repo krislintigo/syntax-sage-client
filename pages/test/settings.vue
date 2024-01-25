@@ -60,13 +60,10 @@ const terms$ = api.service('terms').useFind(query, { paginateOn: 'server' })
 terms$.isSsr && (await terms$.request)
 
 const startLearning = async () => {
-  const allTerms = await api
-    .service('terms')
-    .find({ query: { userId: authStore.user._id, $paginate: false } })
-  testStore.start({
+  await testStore.start({
     numberOfQuestions: learnSettings.questions,
     termsToTest: terms$.data as Term[],
-    allTerms: allTerms.data as Term[],
+    allTermsQuery: { userId: authStore.user._id },
     questionTypes: learnSettings.questionTypes,
   })
   await navigateTo('/test')
@@ -78,14 +75,14 @@ const startLearning = async () => {
 <i18n lang="yaml">
 en:
   title:
-    learning: 'Study terms below'
-    mastered: 'Repeat mastered terms'
+    learning: Study terms below
+    mastered: Repeat mastered terms
 ru:
   title:
-    learning: 'Study terms below'
-    mastered: 'Repeat mastered terms'
+    learning: Изучайте термины ниже
+    mastered: Повторите выученные термины
 fi:
   title:
-    learning: 'Study terms below'
-    mastered: 'Repeat mastered terms'
+    learning: Opiskele alla olevia termejä
+    mastered: Kertaa opittuja sanoja
 </i18n>

@@ -26,8 +26,12 @@ div
         @favorite-click='changeFavorite(term)',
         @click='openTermDetail(term)'
       )
-  client-only
-    span PWA: {{ $pwa }}
+      el-pagination(
+        v-model:current-page='terms$.currentPage',
+        :total='terms$.total',
+        layout='prev, pager, next',
+        :hide-on-single-page='terms$.limit === 10'
+      )
 </template>
 
 <script setup lang="ts">
@@ -68,7 +72,6 @@ const termsQuery = computed(() => ({
         }),
       },
     }),
-    $paginate: false,
   },
 }))
 

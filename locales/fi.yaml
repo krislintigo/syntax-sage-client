@@ -8,7 +8,7 @@ termStatistics:
   labels:
     newToLearn: Uusia opeteltavia
     stillLearning: Keskeneräiset
-    mastered: Opetellut
+    mastered: Opitut
 categories:
   labels:
     verbs: Verbit

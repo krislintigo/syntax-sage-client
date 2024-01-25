@@ -1,12 +1,15 @@
-const generateOptions = (
+const generateOptions = async (
   term: Term,
-  allTerms: Term[],
+  allTermsQuery: Record<string, any>,
   variant: 'original' | 'local',
 ) => {
-  const _optionsTerms = _shuffle(allTerms).slice(
-    0,
-    Math.min(4, allTerms.length),
-  )
+  const { api } = useFeathers()
+  const { data: _optionsTerms } = await api.service('terms').find({
+    query: {
+      ...allTermsQuery,
+      $sample: 4,
+    },
+  })
 
   const correctTerm = _optionsTerms.find((t) => t._id === term._id)
   const optionsTerms = correctTerm
@@ -14,7 +17,7 @@ const generateOptions = (
     : _shuffle([term, ..._optionsTerms.slice(0, _optionsTerms.length - 1)])
 
   return optionsTerms.map((term) => ({
-    value: variant === 'original' ? term.word.local : term.word.original,
+    value: variant === 'original' ? term.word!.local : term.word!.original,
   }))
 }
 
@@ -26,15 +29,15 @@ export const useTestStore = defineStore('test', () => {
   const questions = ref<Question[]>([])
   const masteredTerms = ref<Term[]>([])
 
-  const start = ({
+  const start = async ({
     numberOfQuestions, // not more than 3 for each term
     questionTypes,
     termsToTest,
-    allTerms,
+    allTermsQuery,
   }: {
     numberOfQuestions: number
     termsToTest: Term[]
-    allTerms: Term[]
+    allTermsQuery: Record<string, any>
     questionTypes: (keyof Term['studies'])[]
   }) => {
     if (!questionTypes.length) return
@@ -62,7 +65,7 @@ export const useTestStore = defineStore('test', () => {
 
     const allTest = ids.map((id) => termsWithCoefficients[id].term)
 
-    for (const term of allTest) {
+    const all = allTest.map(async (term) => {
       const sameTerms = questions.value.filter(
         (q) => q.originalTerm._id === term._id,
       )
@@ -90,7 +93,7 @@ export const useTestStore = defineStore('test', () => {
             variant === 'original' ? term.word.original : term.word.local
           const correct =
             variant === 'original' ? term.word.local : term.word.original
-          const options = generateOptions(term, allTerms, variant)
+          const options = await generateOptions(term, allTermsQuery, variant)
 
           questions.value.push({
             type: [studyType, variant, select],
@@ -125,7 +128,9 @@ export const useTestStore = defineStore('test', () => {
           const correct =
             select === 'options' ? term.word.local : term.word.original
           const options =
-            select === 'options' ? generateOptions(term, allTerms, variant) : []
+            select === 'options'
+              ? await generateOptions(term, allTermsQuery, variant)
+              : []
 
           questions.value.push({
             type: [studyType, variant, select],
@@ -141,7 +146,9 @@ export const useTestStore = defineStore('test', () => {
           break
         }
       }
-    }
+    })
+
+    await Promise.all(all)
 
     questions.value = _shuffle(questions.value)
   }

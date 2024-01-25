@@ -88,13 +88,10 @@ const openTermDetail = (term: Term) => {
 }
 
 const startLearning = async () => {
-  const allTerms = await api
-    .service('terms')
-    .find({ query: { userId: authStore.user._id, $paginate: false } })
-  testStore.start({
+  await testStore.start({
     numberOfQuestions: learnSettings.questions,
     termsToTest: favorite$.data as Term[],
-    allTerms: allTerms.data as Term[],
+    allTermsQuery: { userId: authStore.user._id },
     questionTypes: learnSettings.questionTypes,
   })
   await navigateTo('/test')
