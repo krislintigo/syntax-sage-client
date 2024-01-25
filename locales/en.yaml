@@ -7,7 +7,7 @@ courses:
 termStatistics:
   labels:
     new: New to learn
-    lLearning: Still learning
+    learning: Still learning
     mastered: Mastered
 categories:
   labels:

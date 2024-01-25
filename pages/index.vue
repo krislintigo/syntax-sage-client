@@ -46,7 +46,6 @@ const detailDialog = reactive({
   visible: false,
   term: null as Term | null,
 })
-const progressStatistics = ref<any>(null)
 
 const wordJoin = computed(() => filter.search || filter.categories.length)
 

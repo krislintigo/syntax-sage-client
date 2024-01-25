@@ -44,6 +44,6 @@
     "nuxt-feathers-pinia": "^0.1.0",
     "pinia": "^2.1.7",
     "socket.io-client": "^4.7.4",
-    "syntax-sage-server": "./server/syntax-sage-server-1.0.1.tgz"
+    "syntax-sage-server": "./server/syntax-sage-server-1.0.2.tgz"
   }
 }
