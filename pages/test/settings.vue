@@ -61,6 +61,7 @@ const learnSettings = reactive({
   questions: 10,
   questionTypes: ['match', 'writing', 'audio'] as (keyof Term['studies'])[],
 })
+const testCount = ref(0)
 const toStudy = reactive({
   isSelect: false,
   ids: [] as string[],
@@ -85,16 +86,16 @@ const terms$ = api.service('terms').useFind(query, { paginateOn: 'server' })
 
 terms$.isSsr && (await terms$.request)
 
-const testCount = computed(() =>
-  toStudy.isSelect ? toStudy.ids.length : terms$.total,
+watch(
+  [() => terms$.total, () => toStudy.ids.length, () => toStudy.isSelect],
+  () => {
+    testCount.value = toStudy.isSelect ? toStudy.ids.length : terms$.total
+  },
+  { immediate: true },
 )
 
-watchEffect(() => {
-  if (toStudy.isSelect) {
-    learnSettings.questions = toStudy.ids.length
-  } else {
-    learnSettings.questions = 1
-  }
+watch(testCount, () => {
+  learnSettings.questions = toStudy.isSelect ? toStudy.ids.length : 1
 })
 
 const pushToStudy = (term: Term) => {
