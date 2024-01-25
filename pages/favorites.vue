@@ -7,11 +7,11 @@ div
       TermDetails(:term='detailDialog.term')
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
+      h3.text-xl.text-center.mb-2 {{ t('settings.title') }}
       .border-2.rounded-xl.border-gray-600.p-4.mb-3
         LearnSettings(
           v-model='learnSettings',
-          title='$default',
-          :count='favorite$.total',
+          :test-count='favorite$.total',
           @start='startLearning'
         )
       WordCard(
@@ -30,6 +30,7 @@ definePageMeta({
   permission: ['student'],
 })
 
+const { t } = useI18n({ useScope: 'local' })
 const { api } = useFeathers()
 const authStore = useAuthStore()
 const testStore = useTestStore()
@@ -99,3 +100,15 @@ const startLearning = async () => {
 </script>
 
 <style scoped lang="scss"></style>
+
+<i18n lang="yaml">
+en:
+  settings:
+    title: Learn your favorite words!
+ru:
+  settings:
+    title: Учите любимые слова!
+fi:
+  settings:
+    title: Opiskele suosikkisanojasi!
+</i18n>

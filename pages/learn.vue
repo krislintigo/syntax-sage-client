@@ -71,7 +71,6 @@ const term = computed(() => terms$.data[0])
 
 watchEffect(() => {
   if (terms$.isPending) return
-  console.log('terms', terms$.skip, terms$.total)
   if (terms$.skip === terms$.total) {
     return navigateTo('/')
   }

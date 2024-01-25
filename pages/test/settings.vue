@@ -3,17 +3,40 @@
   h2.mb-5.text-center.text-2xl {{ title }}:
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
-      .border-2.rounded-xl.border-gray-600.p-4.mb-3
+      .border-2.rounded-xl.border-gray-600.p-4.mb-3(
+        v-if='learnSettings.questions'
+      )
         LearnSettings(
           v-model='learnSettings',
-          :count='terms$.total',
+          :test-count='testCount',
           @start='startLearning'
         )
-      WordCard(
-        v-for='term in terms$.data',
-        :key='term._id',
-        :word='term.word',
-        hide-favorite
+      h3.text-xl.text-center.py-3(v-else) {{ t('study.empty') }}
+      .mb-3(v-if='terms$.total')
+        h3.text-sm.text-left.mb-3 Choose terms to test (if not selected - all terms will be studied)
+        el-button.w-full(
+          v-if='!toStudy.isSelect',
+          size='large',
+          @click='toStudy.isSelect = true'
+        ) {{ t('study.select') }}
+        el-row.w-full.mt-3(v-else)
+          el-button.grow(size='large', @click='cancelStudy') {{ t('study.cancel') }}
+      el-row(v-for='term in terms$.data', :key='term._id', align='middle')
+        el-checkbox(
+          v-if='toStudy.isSelect',
+          :model-value='toStudy.ids.includes(term._id)',
+          @click='pushToStudy(term)'
+        ) {{  }}
+        WordCard.grow(
+          :word='term.word',
+          hide-favorite,
+          @click='pushToStudy(term)'
+        )
+      el-pagination(
+        v-model:current-page='terms$.currentPage',
+        :total='terms$.total',
+        layout='prev, pager, next',
+        :hide-on-single-page='terms$.limit === 10'
       )
       el-button.mt-3.my-8(
         size='large',
@@ -38,8 +61,12 @@ const learnSettings = reactive({
   questions: 10,
   questionTypes: ['match', 'writing', 'audio'] as (keyof Term['studies'])[],
 })
+const toStudy = reactive({
+  isSelect: false,
+  ids: [] as string[],
+})
 
-const target = computed(() => route.query.target)
+const target = computed(() => route.query.target as 'learning' | 'mastered')
 
 const title = computed(() => t(`title.${target.value}`))
 
@@ -51,7 +78,6 @@ const query = computed(() => ({
     ...(target.value === 'mastered' && {
       $repeat: true,
     }),
-    $paginate: false,
   },
 }))
 
@@ -59,13 +85,54 @@ const terms$ = api.service('terms').useFind(query, { paginateOn: 'server' })
 
 terms$.isSsr && (await terms$.request)
 
+const testCount = computed(() =>
+  toStudy.isSelect ? toStudy.ids.length : terms$.total,
+)
+
+watchEffect(() => {
+  if (toStudy.isSelect) {
+    learnSettings.questions = toStudy.ids.length
+  } else {
+    learnSettings.questions = 1
+  }
+})
+
+const pushToStudy = (term: Term) => {
+  if (!toStudy.isSelect) return
+  if (toStudy.ids.includes(term._id as string)) {
+    toStudy.ids = toStudy.ids.filter((id) => id !== term._id)
+  } else {
+    toStudy.ids.push(term._id as string)
+  }
+}
+
+const cancelStudy = () => {
+  toStudy.isSelect = false
+  toStudy.ids = []
+}
+
 const startLearning = async () => {
+  if (toStudy.isSelect && toStudy.ids.length === 0) {
+    ElMessage.warning('Nothing to study')
+    return
+  }
+  const response = await api.service('terms').find({
+    query: {
+      ...query.value.query,
+      ...(toStudy.isSelect && {
+        _id: { $in: toStudy.ids },
+      }),
+      $paginate: false,
+    },
+  })
   await testStore.start({
     numberOfQuestions: learnSettings.questions,
-    termsToTest: terms$.data as Term[],
+    termsToTest: response.data as Term[],
     allTermsQuery: { userId: authStore.user._id },
     questionTypes: learnSettings.questionTypes,
   })
+  toStudy.isSelect = false
+  toStudy.ids = []
   await navigateTo('/test')
 }
 </script>
@@ -77,12 +144,30 @@ en:
   title:
     learning: Study terms below
     mastered: Repeat mastered terms
+  study:
+    title: Add new to study set
+    select: Select words
+    cancel: Cancel
+    add: Study
+    empty: Add more terms to enable testing and continue learning!
 ru:
   title:
     learning: Изучайте термины ниже
     mastered: Повторите выученные термины
+  study:
+    title: Добавить новые слова
+    select: Выбрать слова
+    cancel: Отмена
+    add: Добавить
+    empty: Добавьте больше терминов, чтобы включить тестирование и продолжить обучение!
 fi:
   title:
     learning: Opiskele alla olevia termejä
     mastered: Kertaa opittuja sanoja
+  study:
+    title: Lisää uusia sanoja
+    select: Valitse sanat
+    cancel: Peruuta
+    add: Lisää
+    empty: Lisää sanoja suorittaaksesi testit ja jatkaksesi opiskelua!
 </i18n>
