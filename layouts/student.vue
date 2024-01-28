@@ -7,7 +7,7 @@
         el-icon
           ElIconUser
     el-divider(class='!mb-3')
-  el-main#main(class='h-[88%]')
+  el-main#main(class='!h-[86%]')
     .mb-5
       el-input.mb-3(
         v-model='filter.search',
