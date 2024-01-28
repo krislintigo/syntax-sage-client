@@ -3,7 +3,7 @@
   el-row.gap-x-1(v-for='(row, i) in keyboard', :key='i', justify='center')
     template(v-for='(key, j) in row', :key='j')
       template(v-if='key.action === "remove"')
-        .flex.justify-center.items-center.h-10.bg-gray-600.rounded(
+        .flex.justify-center.items-center.bg-gray-600.rounded(
           :style='{ width: letterWidth * 1.5 + "px" }',
           @click='input = input.slice(0, -1)'
         )
@@ -11,7 +11,7 @@
       .flex.justify-center.items-center.bg-gray-600.rounded(
         v-else,
         :style='{ width: letterWidth + "px" }',
-        class='aspect-[3/4]',
+        class='aspect-[2/3]',
         @click='input += key'
       )
         span.leading-none.text-xl {{ key }}
@@ -30,7 +30,7 @@ const keyboard = [
 
 const { width } = useWindowSize()
 
-const letterWidth = computed(() => Math.round(width.value / 14))
+const letterWidth = computed(() => Math.round(Math.min(width.value, 500) / 13))
 </script>
 
 <style scoped lang="scss"></style>

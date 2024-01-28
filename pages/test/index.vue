@@ -87,8 +87,7 @@
           type='danger',
           class='!text-lg',
           @click='checkAnswer("-")'
-        ) Не знаю
-      .mb-5(v-if='currentQuestion.type.includes("input")')
+        ) {{ t('input.dontKnow') }}
 </template>
 
 <script setup lang="ts">
@@ -185,6 +184,7 @@ en:
     placeholder:
       ru: Type in Russian
       fi: Type in Finnish
+    dontKnow: I don't know
 ru:
   dialog:
     correct:
@@ -198,6 +198,7 @@ ru:
     placeholder:
       ru: Напишите на русском
       fi: Напишите на финском
+    dontKnow: Не знаю
 fi:
   dialog:
     correct:
@@ -211,4 +212,5 @@ fi:
     placeholder:
       ru: Kirjoita venäjäksi
       fi: Kirjoita suomeksi
+    dontKnow: En tiedä
 </i18n>
