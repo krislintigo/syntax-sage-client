@@ -8,7 +8,7 @@
           @click='input = input.slice(0, -1)'
         )
           Icon(size='25', name='ph:backspace')
-      .flex.justify-center.items-center.bg-zinc-600.rounded(
+      .flex.justify-center.items-center.bg-zinc-600.shadow.rounded(
         v-else,
         :style='{ width: letterStyle.width + "px" }',
         class='aspect-[2/3]',

@@ -69,7 +69,6 @@
           readonly,
           autocapitalize='off',
           autocomplete='off',
-          autofocus,
           @keyup.enter='checkAnswer(currentQuestion.status.answer)',
           @keydown='onInput'
         )
