@@ -66,10 +66,12 @@
           :placeholder='inputPlaceholder',
           size='large',
           class='!text-lg',
+          readonly,
           autocapitalize='off',
-          autocomplete='new-password',
+          autocomplete='off',
           autofocus,
-          @keyup.enter='checkAnswer(currentQuestion.status.answer)'
+          @keyup.enter='checkAnswer(currentQuestion.status.answer)',
+          @keydown='onInput'
         )
           template(#append)
             el-button(
@@ -78,6 +80,7 @@
             )
               el-icon
                 ElIconCheck
+        InputKeyboard.mt-3(v-model='currentQuestion.status.answer')
       .mt-3.text-center
         el-button.w-full(
           text,
@@ -142,6 +145,16 @@ const checkAnswer = async (_answer: string) => {
 
   await termToUpdate.save()
   termToUpdate.reset()
+}
+
+const onInput = (e: KeyboardEvent) => {
+  const letter = e.key
+  if (/^[a-zA-Zа-яА-Я-]$/.test(letter)) {
+    currentQuestion.value.status.answer += letter
+  } else if (letter === 'Backspace') {
+    currentQuestion.value.status.answer =
+      currentQuestion.value.status.answer.slice(0, -1)
+  }
 }
 
 const nextQuestion = () => {
