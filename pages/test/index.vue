@@ -2,22 +2,30 @@
 .h-full
   client-only
     el-dialog(
-      v-model='error.dialog',
+      v-if='currentQuestion',
+      v-model='dialog',
       width='90%',
-      :title='t("error.title") + "!"',
+      :title='currentQuestion.status.correct ? t("dialog.correct.title") : t("dialog.error.title")',
       align-center,
+      :class='["!border !rounded", { "border-green-500": currentQuestion.status.correct, "border-red-500": !currentQuestion.status.correct }]',
       :show-close='false',
       :close-on-click-modal='false',
       :close-on-press-escape='false'
     )
-      p.text-xl.font-semibold {{ error.question }}
-      .mb-5
-      p.text-sm.text-green-600 {{ t('error.correct') }}:
-      h4.text-xl {{ error.correct }}
-      .mb-5
-      p.text-sm.text-red-500 {{ t('error.youSaid') }}:
-      h4.text-xl {{ error.answer }}
-      el-button.w-full.mt-5(plain, @click='nextQuestion') {{ t('error.next') }}
+      template(v-if='currentQuestion.status.correct')
+        p.text-3xl {{ currentQuestion.originalTerm.word.original }}
+        p.text-2xl {{ currentQuestion.originalTerm.word.local }}
+        .mb-3
+        p.text-base {{ currentQuestion.originalTerm.word.english }}
+      template(v-else)
+        p.text-xl.font-semibold {{ currentQuestion.data.question }}
+        .mb-5
+        p.text-sm.text-green-600 {{ t('dialog.error.correct') }}:
+        p.text-xl {{ currentQuestion.data.correct }}
+        .mb-5
+        p.text-sm.text-red-500 {{ t('dialog.error.youSaid') }}:
+        p.text-xl {{ currentQuestion.status.answer }}
+      el-button.w-full.mt-5(plain, size='large', @click='nextQuestion') {{ t('dialog.next') }}
   el-progress.mb-4(
     :percentage='(progress.current / progress.total) * 100',
     :show-text='false'
@@ -42,36 +50,41 @@
       )
         el-icon(size='100')
           ElIconMicrophone
-    .flex.flex-col.gap-y-3.mx-3(
-      v-if='currentQuestion.type.includes("options")'
-    )
-      .p-4.border-2.rounded-lg(
-        v-for='option in currentQuestion.data.options',
-        :key='option.value',
-        :class='getOptionColorClass(option)',
-        @click='checkAnswer(option.value)'
+    div
+      .flex.flex-col.gap-y-3.mx-3(
+        v-if='currentQuestion.type.includes("options")'
       )
-        h4.text-base {{ option.value }}
-    .mb-16.outline.outline-1.rounded(
-      v-if='currentQuestion.type.includes("input")',
-      :class='getInputColorClass()'
-    )
-      el-input.h-14(
-        v-model='currentQuestion.status.answer',
-        :placeholder='inputPlaceholder',
-        size='large',
-        class='!text-lg',
-        autocapitalize='off',
-        autofocus,
-        @keyup.enter='checkAnswer(currentQuestion.status.answer)'
-      )
-        template(#append)
-          el-button(
-            type='primary',
-            @click='checkAnswer(currentQuestion.status.answer)'
-          )
-            el-icon
-              ElIconCheck
+        .p-4.border-2.border-gray-500.rounded-lg(
+          v-for='option in currentQuestion.data.options',
+          :key='option.value',
+          @click='checkAnswer(option.value)'
+        )
+          h4.text-base {{ option.value }}
+      .rounded(v-if='currentQuestion.type.includes("input")')
+        el-input.h-14(
+          v-model='currentQuestion.status.answer',
+          :placeholder='inputPlaceholder',
+          size='large',
+          class='!text-lg',
+          autocapitalize='off',
+          autofocus,
+          @keyup.enter='checkAnswer(currentQuestion.status.answer)'
+        )
+          template(#append)
+            el-button(
+              type='primary',
+              @click='checkAnswer(currentQuestion.status.answer)'
+            )
+              el-icon
+                ElIconCheck
+      .mt-3.text-center
+        el-button.w-full(
+          text,
+          type='danger',
+          class='!text-lg',
+          @click='checkAnswer("-")'
+        ) Не знаю
+      .mb-5(v-if='currentQuestion.type.includes("input")')
 </template>
 
 <script setup lang="ts">
@@ -86,13 +99,7 @@ const { t } = useI18n({ useScope: 'local' })
 const { play } = useVoiceover()
 const testStore = useTestStore()
 
-// remove this?
-const error = reactive({
-  dialog: false,
-  question: '',
-  answer: '',
-  correct: '',
-})
+const dialog = ref(false)
 const showEnglish = ref(false)
 
 const progress = computed(() => testStore.progress)
@@ -100,43 +107,9 @@ const currentQuestion = computed(
   () => testStore.questions[progress.value.current],
 )
 
-const getOptionColorClass = (option: { value: string }) => {
-  if (!currentQuestion.value.status.answered) return 'border-gray-500'
-
-  if (option.value === currentQuestion.value.data.correct) {
-    return 'border-green-500'
-  }
-  if (
-    !currentQuestion.value.status.correct &&
-    option.value === currentQuestion.value.status.answer
-  ) {
-    return 'border-red-500'
-  }
-  return 'border-gray-500'
-}
-
-const getInputColorClass = () => {
-  if (!currentQuestion.value.status.answered) return 'outline-none'
-
-  if (currentQuestion.value.status.correct) {
-    return 'outline-green-500'
-  }
-  return 'outline-red-500'
-}
-
 const inputPlaceholder = computed(() => {
   if (!currentQuestion.value) return ''
-
-  let language = ''
-
-  if (currentQuestion.value.type.includes('writing')) {
-    language = 'fi'
-  }
-  if (currentQuestion.value.type.includes('audio')) {
-    language = 'fi'
-  }
-
-  return t(`input.placeholder.${language}`)
+  return t(`input.placeholder.fi`)
 })
 
 const playQuestion = () => {
@@ -158,23 +131,20 @@ watchEffect(() => {
 const checkAnswer = async (_answer: string) => {
   if (!_answer) return
   testStore.answer(_answer)
-  if (!currentQuestion.value.status.correct) {
-    error.dialog = true
-    error.question = currentQuestion.value.data.question
-    error.answer = currentQuestion.value.status.answer
-    error.correct = currentQuestion.value.data.correct
-    return
-  }
+  dialog.value = true
+  if (!currentQuestion.value.status.correct) return
+
   const termToUpdate = currentQuestion.value.originalTerm.clone()
   termToUpdate.studies[currentQuestion.value.studyType] += 1
   termToUpdate.lastStudiedAt = new Date().toISOString()
+  if (!termToUpdate.viewed) termToUpdate.viewed = true
+
   await termToUpdate.save()
   termToUpdate.reset()
-  nextQuestion()
 }
 
 const nextQuestion = () => {
-  error.dialog = false
+  dialog.value = false
   showEnglish.value = false
   setTimeout(() => {
     progress.value.current += 1
@@ -189,30 +159,39 @@ const nextQuestion = () => {
 
 <i18n lang="yaml">
 en:
-  error:
-    title: Mistake
-    correct: Correct
-    youSaid: You said
+  dialog:
+    correct:
+      title: Correct!
+    error:
+      title: Mistake!
+      correct: Correct
+      youSaid: You said
     next: Next
   input:
     placeholder:
       ru: Type in Russian
       fi: Type in Finnish
 ru:
-  error:
-    title: Ошибка
-    correct: Правильно
-    youSaid: Вы сказали
+  dialog:
+    correct:
+      title: Правильно!
+    error:
+      title: Ошибка!
+      correct: Правильно
+      youSaid: Вы сказали
     next: Далее
   input:
     placeholder:
       ru: Напишите на русском
       fi: Напишите на финском
 fi:
-  error:
-    title: Väärin
-    correct: Oikein
-    youSaid: Vastasit
+  dialog:
+    correct:
+      title: Oikein!
+    error:
+      title: Väärin!
+      correct: Oikein
+      youSaid: Vastasit
     next: Seuraava
   input:
     placeholder:

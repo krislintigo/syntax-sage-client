@@ -42,7 +42,7 @@ const terms$ = api.service('terms').useFind(query, { paginateOn: 'server' })
 watchEffect(() => {
   statistics.value.count = terms$.total
   statistics.value.percentage = props.total
-    ? Math.round((terms$.total / props.total) * 100)
+    ? Math.ceil((terms$.total / props.total) * 100)
     : 0
 })
 </script>
