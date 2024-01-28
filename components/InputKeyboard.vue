@@ -3,16 +3,16 @@
   el-row.gap-x-1(v-for='(row, i) in keyboard', :key='i', justify='center')
     template(v-for='(key, j) in row', :key='j')
       template(v-if='key.action === "backspace"')
-        .flex.justify-center.items-center.border.border-zinc-700.rounded(
+        .flex.justify-center.items-center.bg-zinc-600.rounded(
           :style='{ width: letterStyle.width * 1.5 + "px" }',
           @click='input = input.slice(0, -1)'
         )
           Icon(size='25', name='ph:backspace')
-      .flex.justify-center.items-center.border.border-zinc-700.rounded(
+      .flex.justify-center.items-center.bg-zinc-600.rounded(
         v-else,
         :style='{ width: letterStyle.width + "px" }',
         class='aspect-[2/3]',
-        @click='input += key'
+        @click='input += key.letter'
       )
         span.leading-none.font-light(
           :style='{ fontSize: letterStyle.fontSize + "px", marginBottom: key.margin + "px" }'
@@ -23,12 +23,6 @@
 import { useWindowSize } from '@vueuse/core'
 
 const input = defineModel<string>({ required: true })
-
-// const keyboard = [
-//   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'å'],
-//   ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ö', 'ä'],
-//   ['z', 'x', 'c', 'v', 'b', 'n', 'm', '-', { action: 'remove' }],
-// ]
 
 const keyboard = [
   [
