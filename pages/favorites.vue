@@ -8,12 +8,13 @@ div
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
       h3.text-xl.text-center.mb-2 {{ t('settings.title') }}
-      .border-2.rounded-xl.border-gray-600.p-4.mb-3
+      .border-2.rounded-xl.border-gray-600.p-4.mb-3(v-if='favorite$.total')
         LearnSettings(
           v-model='learnSettings',
           :test-count='favorite$.total',
           @start='startLearning'
         )
+      p.text-base.text-center(v-else) {{ t('settings.empty') }}
       WordCard(
         v-for='term in favorite$.data',
         :key='term._id',
@@ -105,10 +106,13 @@ const startLearning = async () => {
 en:
   settings:
     title: Learn your favorite words!
+    empty: You don't have any favorite words yet. Add some to start learning!
 ru:
   settings:
     title: Учите любимые слова!
+    empty: У вас еще нет любимых слов. Добавьте несколько, чтобы начать учиться!
 fi:
   settings:
     title: Opiskele suosikkisanojasi!
+    empty: Sinulla ei ole vielä suosikkisanoja. Lisää muutama aloittaaksesi oppimisen!
 </i18n>

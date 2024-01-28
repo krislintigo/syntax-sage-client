@@ -67,6 +67,7 @@
           size='large',
           class='!text-lg',
           autocapitalize='off',
+          autocomplete='off',
           autofocus,
           @keyup.enter='checkAnswer(currentQuestion.status.answer)'
         )

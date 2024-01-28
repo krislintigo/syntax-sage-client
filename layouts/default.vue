@@ -4,7 +4,7 @@
     el-row.pt-6(justify='space-between', align='middle')
       h1.text-3xl(@click='reload') Syntax Sage
     el-divider(class='!mb-3')
-  el-main(class='h-[86%]')
+  el-main(class='h-[84%]')
     slot
 </template>
 

@@ -1,5 +1,10 @@
 <template lang="pug">
 .h-full
+  client-only
+    el-dialog(v-model='detailDialog.visible', width='90%', align-center)
+      template(#header)
+        h3.text-3xl {{ detailDialog.term.word.original }}
+      TermDetails(:term='detailDialog.term')
   h2.mb-5.text-center.text-2xl {{ title }}:
   el-row.mt-8
     el-col.flex.flex-col.gap-y-2
@@ -30,7 +35,7 @@
         WordCard.grow(
           :word='term.word',
           hide-favorite,
-          @click='pushToStudy(term)'
+          @click='toStudy.isSelect ? pushToStudy(term) : openTermDetail(term)'
         )
       el-pagination(
         v-model:current-page='terms$.currentPage',
@@ -65,6 +70,10 @@ const testCount = ref(0)
 const toStudy = reactive({
   isSelect: false,
   ids: [] as string[],
+})
+const detailDialog = reactive({
+  visible: false,
+  term: null as Term | null,
 })
 
 const target = computed(() => route.query.target as 'learning' | 'mastered')
@@ -110,6 +119,11 @@ const pushToStudy = (term: Term) => {
 const cancelStudy = () => {
   toStudy.isSelect = false
   toStudy.ids = []
+}
+
+const openTermDetail = (term: Term) => {
+  detailDialog.term = term
+  detailDialog.visible = true
 }
 
 const startLearning = async () => {
