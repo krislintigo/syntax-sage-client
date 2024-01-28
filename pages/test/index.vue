@@ -67,7 +67,7 @@
           size='large',
           class='!text-lg',
           autocapitalize='off',
-          autocomplete='off',
+          autocomplete='new-password',
           autofocus,
           @keyup.enter='checkAnswer(currentQuestion.status.answer)'
         )
