@@ -4,17 +4,20 @@
     template(v-for='(key, j) in row', :key='j')
       template(v-if='key.action === "remove"')
         .flex.justify-center.items-center.bg-gray-600.rounded(
-          :style='{ width: letterWidth * 1.5 + "px" }',
+          :style='{ width: letterStyle.width * 1.5 + "px" }',
           @click='input = input.slice(0, -1)'
         )
           Icon(size='25', name='ph:backspace')
       .flex.justify-center.items-center.bg-gray-600.rounded(
         v-else,
-        :style='{ width: letterWidth + "px" }',
+        :style='{ width: letterStyle.width + "px" }',
         class='aspect-[2/3]',
         @click='input += key'
       )
-        span.leading-none.text-xl {{ key }}
+        span.leading-none.font-light(
+          :class='{ "mb-1": marginLettersToFix.includes(key) }',
+          :style='{ fontSize: letterStyle.fontSize + "px" }'
+        ) {{ key }}
 </template>
 
 <script setup lang="ts">
@@ -27,10 +30,32 @@ const keyboard = [
   ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ö', 'ä'],
   ['z', 'x', 'c', 'v', 'b', 'n', 'm', '-', { action: 'remove' }],
 ]
+const marginLettersToFix = [
+  'q',
+  'w',
+  'e',
+  'r',
+  'y',
+  'u',
+  'o',
+  'p',
+  'a',
+  's',
+  'g',
+  'z',
+  'x',
+  'c',
+  'v',
+  'n',
+  'm',
+]
 
 const { width } = useWindowSize()
 
-const letterWidth = computed(() => Math.round(Math.min(width.value, 500) / 13))
+const letterStyle = computed(() => ({
+  width: Math.round(Math.min(width.value, 500) / 13),
+  fontSize: Math.round(Math.min(width.value, 500) / 18),
+}))
 </script>
 
 <style scoped lang="scss"></style>
