@@ -1,9 +1,14 @@
 <template lang="pug">
-.flex.flex-col.gap-y-2.bg-zinc-800.p-1.py-3(class='mx-[-20px]')
-  .grid.gap-x-1(
+.flex.flex-col.bg-zinc-800.p-1.py-3(
+  :class='["mx-[-20px]", spacing.row]',
+  @mouseleave='pressed = false',
+  @mouseup='pressed = false'
+)
+  .grid(
     v-for='(row, i) in FINNISH_KEYBOARD.keys',
     :key='i',
-    :style='{ gridTemplateColumns: `repeat(${FINNISH_KEYBOARD.cols}, minmax(0, 1fr))` }'
+    :style='{ gridTemplateColumns: `repeat(${FINNISH_KEYBOARD.cols}, minmax(0, 1fr))` }',
+    :class='[spacing.col]'
   )
     template(v-for='(key, j) in row', :key='j')
       template(v-if='key.action === "uppercase"')
@@ -37,6 +42,9 @@
         v-else,
         class='aspect-[2/3]',
         :style='key.grid',
+        tabindex='0',
+        @mousedown='pressed = true',
+        @mouseover='onMouseover(key)',
         @click='input += key.letter'
       )
         span.leading-none.font-light(
@@ -50,6 +58,7 @@ import { useWindowSize } from '@vueuse/core'
 defineEmits<{ (e: 'enter'): void }>()
 
 const input = defineModel<string>({ required: true })
+const pressed = ref(false)
 
 const { width } = useWindowSize()
 
@@ -57,6 +66,30 @@ const letterStyle = computed(() => ({
   width: Math.round(Math.min(width.value, 500) / 13) - 1,
   fontSize: Math.round(Math.min(width.value, 500) / 16),
 }))
+
+const spacing = computed(() => {
+  const w = Math.min(width.value, 500)
+  if (w < 300)
+    return {
+      row: 'gap-y-2',
+      col: 'gap-x-1',
+    }
+  if (w < 400)
+    return {
+      row: 'gap-y-2.5',
+      col: 'gap-x-1.5',
+    }
+  return {
+    row: 'gap-y-3',
+    col: 'gap-x-2',
+  }
+})
+
+const onMouseover = (key: any) => {
+  if (pressed.value) {
+    console.log(key.letter)
+  }
+}
 </script>
 
 <style scoped lang="scss"></style>
