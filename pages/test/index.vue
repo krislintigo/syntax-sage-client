@@ -72,14 +72,10 @@
           @keyup.enter='checkAnswer(currentQuestion.status.answer)',
           @keydown='onInput'
         )
-          template(#append)
-            el-button(
-              type='primary',
-              @click='checkAnswer(currentQuestion.status.answer)'
-            )
-              el-icon
-                ElIconCheck
-        InputKeyboard.mt-3(v-model='currentQuestion.status.answer')
+        InputKeyboard.mt-3(
+          v-model='currentQuestion.status.answer',
+          @enter='checkAnswer(currentQuestion.status.answer)'
+        )
       .mt-3.text-center
         el-button.w-full(
           text,

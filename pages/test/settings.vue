@@ -18,7 +18,7 @@
         )
       h3.text-xl.text-center.py-3(v-else) {{ t('study.empty') }}
       .mb-3(v-if='terms$.total')
-        h3.text-sm.text-left.mb-3 Choose terms to test (if not selected - all terms will be studied)
+        h3.text-sm.text-left.mb-3.px-8 {{ t('study.hint') }}
         el-button.w-full(
           v-if='!toStudy.isSelect',
           size='large',
@@ -160,6 +160,7 @@ en:
     learning: Study terms below
     mastered: Repeat mastered terms
   study:
+    hint: Select terms to study (if not selected - all terms will be studied)
     title: Add new to study set
     select: Select words
     cancel: Cancel
@@ -170,6 +171,7 @@ ru:
     learning: Изучайте термины ниже
     mastered: Повторите выученные термины
   study:
+    hint: Выберите термины для изучения (если не выбрано - будут изучены все термины)
     title: Добавить новые слова
     select: Выбрать слова
     cancel: Отмена
@@ -180,6 +182,7 @@ fi:
     learning: Opiskele alla olevia termejä
     mastered: Kertaa opittuja sanoja
   study:
+    hint: Valitse opeteltavat termit (muuten opetellaan kaikki termit)
     title: Lisää uusia sanoja
     select: Valitse sanat
     cancel: Peruuta

@@ -1,17 +1,42 @@
 <template lang="pug">
 .flex.flex-col.gap-y-2.bg-zinc-800.p-1.py-3(class='mx-[-20px]')
-  el-row.gap-x-1(v-for='(row, i) in keyboard', :key='i', justify='center')
+  .grid.gap-x-1(
+    v-for='(row, i) in FINNISH_KEYBOARD.keys',
+    :key='i',
+    :style='{ gridTemplateColumns: `repeat(${FINNISH_KEYBOARD.cols}, minmax(0, 1fr))` }'
+  )
     template(v-for='(key, j) in row', :key='j')
-      template(v-if='key.action === "backspace"')
+      template(v-if='key.action === "uppercase"')
         .flex.justify-center.items-center.bg-zinc-600.rounded(
-          :style='{ width: letterStyle.width * 1.5 + "px" }',
+          :style='key.grid'
+        )
+          Icon(size='25', name='fluent:keyboard-shift-uppercase-16-regular')
+
+      template(v-else-if='key.action === "backspace"')
+        .flex.justify-center.items-center.bg-zinc-600.rounded(
+          :style='key.grid',
           @click='input = input.slice(0, -1)'
         )
           Icon(size='25', name='ph:backspace')
-      .flex.justify-center.items-center.bg-zinc-600.shadow.rounded(
+
+      template(v-else-if='key.action === "space"')
+        .flex.justify-center.items-center.bg-zinc-600.rounded(
+          :style='key.grid',
+          @click='input += " "'
+        )
+          Icon(size='25', name='tabler:space')
+
+      template(v-else-if='key.action === "enter"')
+        .flex.justify-center.items-center.bg-zinc-600.rounded(
+          :style='key.grid',
+          @click='$emit("enter")'
+        )
+          Icon(size='25', name='uil:enter')
+
+      .flex.justify-center.items-center.bg-zinc-600.shadow.rounded.col-span-2(
         v-else,
-        :style='{ width: letterStyle.width + "px" }',
         class='aspect-[2/3]',
+        :style='key.grid',
         @click='input += key.letter'
       )
         span.leading-none.font-light(
@@ -22,52 +47,14 @@
 <script setup lang="ts">
 import { useWindowSize } from '@vueuse/core'
 
-const input = defineModel<string>({ required: true })
+defineEmits<{ (e: 'enter'): void }>()
 
-const keyboard = [
-  [
-    { letter: 'q', action: 'letter', margin: 4 },
-    { letter: 'w', action: 'letter', margin: 4 },
-    { letter: 'e', action: 'letter', margin: 4 },
-    { letter: 'r', action: 'letter', margin: 4 },
-    { letter: 't', action: 'letter', margin: 4 },
-    { letter: 'y', action: 'letter', margin: 4 },
-    { letter: 'u', action: 'letter', margin: 4 },
-    { letter: 'i', action: 'letter', margin: 4 },
-    { letter: 'o', action: 'letter', margin: 4 },
-    { letter: 'p', action: 'letter', margin: 4 },
-    { letter: 'å', action: 'letter', margin: 4 },
-  ],
-  [
-    { letter: 'a', action: 'letter', margin: 4 },
-    { letter: 's', action: 'letter', margin: 4 },
-    { letter: 'd', action: 'letter', margin: 4 },
-    { letter: 'f', action: 'letter', margin: 4 },
-    { letter: 'g', action: 'letter', margin: 4 },
-    { letter: 'h', action: 'letter', margin: 4 },
-    { letter: 'j', action: 'letter', margin: 4 },
-    { letter: 'k', action: 'letter', margin: 4 },
-    { letter: 'l', action: 'letter', margin: 4 },
-    { letter: 'ö', action: 'letter', margin: 4 },
-    { letter: 'ä', action: 'letter', margin: 4 },
-  ],
-  [
-    { letter: 'z', action: 'letter', margin: 4 },
-    { letter: 'x', action: 'letter', margin: 4 },
-    { letter: 'c', action: 'letter', margin: 4 },
-    { letter: 'v', action: 'letter', margin: 4 },
-    { letter: 'b', action: 'letter', margin: 4 },
-    { letter: 'n', action: 'letter', margin: 4 },
-    { letter: 'm', action: 'letter', margin: 4 },
-    { letter: '-', action: 'letter', margin: 0 },
-    { letter: '', action: 'backspace', margin: 0 },
-  ],
-]
+const input = defineModel<string>({ required: true })
 
 const { width } = useWindowSize()
 
 const letterStyle = computed(() => ({
-  width: Math.round(Math.min(width.value, 500) / 13),
+  width: Math.round(Math.min(width.value, 500) / 13) - 1,
   fontSize: Math.round(Math.min(width.value, 500) / 16),
 }))
 </script>
