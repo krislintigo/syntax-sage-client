@@ -31,6 +31,12 @@ export default defineNuxtConfig({
           rel: 'apple-touch-icon',
           href: '/icons/apple-touch-icon-180x180.png',
         },
+        {
+          rel: 'apple-touch-startup-image',
+          media:
+            'screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)',
+          href: '/splash_screens/iPhone_15_Pro__iPhone_15__iPhone_14_Pro_portrait.png',
+        },
       ],
       meta: [
         {
