@@ -13,6 +13,7 @@ div
         :status='status',
         :query='termsQuery',
         :total='terms$.total',
+        :badge='status === "mastered" ? repeat$.total : null',
         @click='cardClick(status)'
       )
       el-divider
@@ -77,6 +78,28 @@ const terms$ = api
   .useFind(termsQuery, { paginateOn: 'server' })
 
 terms$.isSsr && (await terms$.request)
+
+const repeatQuery = computed(() => ({
+  query: {
+    userId: authStore.user._id,
+    status: 'mastered',
+    studied: true,
+    $repeat: true,
+    $limit: 1,
+  },
+}))
+
+const repeat$ = api
+  .service('terms')
+  .useFind(repeatQuery, { paginateOn: 'server' })
+
+// test for app badge
+watchEffect(() => {
+  if (!navigator) return
+  if ('setAppBadge' in navigator) {
+    navigator.setAppBadge(repeat$.total)
+  }
+})
 
 const cardClick = (key: Term['status']) => {
   switch (key) {

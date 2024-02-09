@@ -2,14 +2,15 @@
 el-card(shadow='never', class='!border-0')
   el-row(justify='space-between', align='middle')
     .flex.items-center.gap-x-4
-      el-progress(
-        type='dashboard',
-        :width='60',
-        :percentage='statistics.percentage',
-        :color='statistics.color'
-      )
-        template(#default)
-          p.font-medium.text-sm {{ statistics.count }}
+      el-badge(:value='badge', :max='10', :hidden='!badge')
+        el-progress(
+          type='dashboard',
+          :width='60',
+          :percentage='statistics.percentage',
+          :color='statistics.color'
+        )
+          template(#default)
+            p.font-medium.text-sm {{ statistics.count }}
       h4.font-medium.text-base {{ statistics.title(t) }}
     el-icon(size='20')
       ElIconArrowRightBold
@@ -20,6 +21,7 @@ const props = defineProps<{
   status: Term['status']
   query: Record<string, any>
   total: number
+  badge: number | null
 }>()
 
 const { t } = useI18n()
